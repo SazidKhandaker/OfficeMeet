@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:office_meet/splashscreen/splashscreen.dart' show Splashscreen;
+import 'package:office_meet/splashscreen/splashscreen.dart' show Splashscreen, SplashScreen;
 
 void main() {
   runApp(const MyApp());
@@ -12,12 +12,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
 
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home:  Splashscreen(),
+      home:  SplashScreen(),
     );
   }
 }
