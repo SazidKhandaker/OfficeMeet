@@ -50,14 +50,14 @@ class _OnboardingScreenState
     /// PAGE 3
     /// =========================
     {
-      "image": "assets/images/teamwork.png",
+      "image": "assets/images/Abhi.png",
 
-      "title": "Work Smarter Together",
+      "title": "Abhi Kundu",
 
       "subtitle":
-      "Boost productivity with intelligent scheduling and seamless workplace collaboration.",
+      "Bridge the gaps and empower limitless possibilities. we are the driving force behind global connectivity. At Nurion Lab, we are the catalysts of extraordinary possibilities.",
 
-      "designation": "",
+      "designation": "Deputy Senior Manager",
     },
   ];
 
