@@ -36,14 +36,14 @@ class _OnboardingScreenState
     /// PAGE 2
     /// =========================
     {
-      "image": "assets/images/meeting.png",
+      "image": "assets/images/Acote.png",
 
-      "title": "Book Rooms Instantly",
+      "title": "Acote",
 
       "subtitle":
-      "Reserve meeting rooms easily without scheduling conflicts and save valuable time.",
+      "Acote Group is a diversified global enterprise focused on innovation, technology, and sustainable growth. We are committed to building future-ready solutions that empower businesses, improve lives, and create long-term value for tomorrow’s world.",
 
-      "designation": "",
+      "designation": "For Your Tomorrow",
     },
 
     /// =========================
@@ -72,6 +72,9 @@ class _OnboardingScreenState
 
         onWillPop: () async {
 
+          /// =========================
+          /// GO TO PREVIOUS PAGE
+          /// =========================
           if (_controller.page != null &&
               _controller.page! > 0) {
 
@@ -87,8 +90,286 @@ class _OnboardingScreenState
             return false;
           }
 
-          return true;
+          /// =========================
+          /// SHOW EXIT DIALOG
+          /// =========================
+          final shouldExit = await showDialog(
+
+            context: context,
+
+            barrierDismissible: false,
+
+            builder: (context) {
+
+              final size = MediaQuery.of(context).size;
+
+              return Dialog(
+
+                backgroundColor: Colors.transparent,
+
+                child: Container(
+
+                  padding: const EdgeInsets.all(24),
+
+                  decoration: BoxDecoration(
+
+                    borderRadius: BorderRadius.circular(30),
+
+                    gradient: const LinearGradient(
+
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+
+                      colors: [
+
+                        Color(0xFF0F172A),
+
+                        Color(0xFF1E293B),
+
+                        Color(0xFF243B55),
+                      ],
+                    ),
+
+                    border: Border.all(
+
+                      color:
+                      const Color(0xFF2CE6A6).withOpacity(0.30),
+
+                      width: 1.2,
+                    ),
+
+                    boxShadow: [
+
+                      BoxShadow(
+
+                        color:
+                        const Color(0xFF2CE6A6).withOpacity(0.12),
+
+                        blurRadius: 30,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+
+                  child: Column(
+
+                    mainAxisSize: MainAxisSize.min,
+
+                    children: [
+
+                      /// =========================
+                      /// ICON
+                      /// =========================
+                      Container(
+
+                        height: 80,
+                        width: 80,
+
+                        decoration: BoxDecoration(
+
+                          shape: BoxShape.circle,
+
+                          gradient: LinearGradient(
+
+                            colors: [
+
+                              const Color(0xFF2CE6A6)
+                                  .withOpacity(0.18),
+
+                              const Color(0xFF16A34A)
+                                  .withOpacity(0.10),
+                            ],
+                          ),
+
+                          border: Border.all(
+
+                            color:
+                            const Color(0xFF2CE6A6)
+                                .withOpacity(0.35),
+                          ),
+                        ),
+
+                        child: const Icon(
+
+                          Icons.logout_rounded,
+
+                          color: Color(0xFF2CE6A6),
+
+                          size: 38,
+                        ),
+                      ),
+
+                      SizedBox(height: size.height * 0.025),
+
+                      /// =========================
+                      /// TITLE
+                      /// =========================
+                      Text(
+
+                        "Exit OfficeMeet?",
+
+                        textAlign: TextAlign.center,
+
+                        style: TextStyle(
+
+                          color: Colors.white,
+
+                          fontSize: size.width * 0.055,
+
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      SizedBox(height: size.height * 0.015),
+
+                      /// =========================
+                      /// SUBTITLE
+                      /// =========================
+                      Text(
+
+                        "Are you sure you want to close the application?",
+
+                        textAlign: TextAlign.center,
+
+                        style: TextStyle(
+
+                          color: const Color(0xFF94A3B8),
+
+                          fontSize: size.width * 0.040,
+
+                          height: 1.6,
+                        ),
+                      ),
+
+                      SizedBox(height: size.height * 0.035),
+
+                      /// =========================
+                      /// BUTTONS
+                      /// =========================
+                      Row(
+                        children: [
+
+                          /// CANCEL BUTTON
+                          Expanded(
+                            child: GestureDetector(
+
+                              onTap: () {
+
+                                Navigator.pop(context, false);
+                              },
+
+                              child: Container(
+
+                                height: 54,
+
+                                decoration: BoxDecoration(
+
+                                  borderRadius:
+                                  BorderRadius.circular(18),
+
+                                  color: Colors.white10,
+                                ),
+
+                                child: Center(
+
+                                  child: Text(
+
+                                    "Cancel",
+
+                                    style: TextStyle(
+
+                                      color: Colors.white,
+
+                                      fontSize:
+                                      size.width * 0.040,
+
+                                      fontWeight:
+                                      FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(width: size.width * 0.04),
+
+                          /// EXIT BUTTON
+                          Expanded(
+                            child: GestureDetector(
+
+                              onTap: () {
+
+                                Navigator.pop(context, true);
+                              },
+
+                              child: Container(
+
+                                height: 54,
+
+                                decoration: BoxDecoration(
+
+                                  borderRadius:
+                                  BorderRadius.circular(18),
+
+                                  gradient:
+                                  const LinearGradient(
+
+                                    colors: [
+
+                                      Color(0xFF2CE6A6),
+
+                                      Color(0xFF16A34A),
+                                    ],
+                                  ),
+
+                                  boxShadow: [
+
+                                    BoxShadow(
+
+                                      color:
+                                      const Color(0xFF2CE6A6)
+                                          .withOpacity(0.22),
+
+                                      blurRadius: 18,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                ),
+
+                                child: Center(
+
+                                  child: Text(
+
+                                    "Exit",
+
+                                    style: TextStyle(
+
+                                      color: Colors.white,
+
+                                      fontSize:
+                                      size.width * 0.040,
+
+                                      fontWeight:
+                                      FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+
+          return shouldExit ?? false;
         },
+
 
       child:Scaffold(
 
@@ -289,9 +570,8 @@ class _OnboardingScreenState
 
                           style: TextStyle(
 
-                            color: index == 0
-                                ? const Color(0xFF2CE6A6)
-                                : Colors.white,
+                            color:
+                                 const Color(0xFF2CE6A6),
 
                             fontSize: isSmallDevice
                                 ? size.width * 0.075

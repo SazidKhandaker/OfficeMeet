@@ -156,8 +156,8 @@ class _SplashScreenState extends State<SplashScreen>
                             padding: EdgeInsets.all(size.width * 0.035),
       
                             child: Image.asset(
-                              "assets/images/nurion_logo.png",
-                              fit: BoxFit.contain,
+                              "assets/images/n2.png",
+                              fit: BoxFit.cover,
       
                             ),
                           ),
