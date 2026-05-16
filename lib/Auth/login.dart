@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:office_meet/Auth/Singin.dart' show SignUpPage;
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:office_meet/homepage.dart' show HomePage;
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -303,35 +304,143 @@ class _LoginPageState extends State<LoginPage> {
                 
                                 /// LOGIN BUTTON
                                 GestureDetector(
-                                  onTap: () {
-                
+                                  onTap: () async {
+
                                     /// EMPTY CHECK
                                     if (emailController.text.trim().isEmpty ||
+
                                         passwordController.text.trim().isEmpty) {
-                
+
                                       showCustomSnackBar(
+
                                         "Please enter your email and password.",
                                       );
-                
+
                                       return;
                                     }
-                
+
                                     /// EMAIL DOMAIN CHECK
                                     if (!emailController.text
                                         .trim()
                                         .endsWith("@acotegroup.com")) {
-                
+
                                       showCustomSnackBar(
+
                                         "Please use your official Acote Group email address.",
                                       );
-                
+
                                       return;
                                     }
-                
-                                    /// SUCCESS
-                                    showCustomSnackBar(
-                                      "Login successful. Welcome back!",
-                                    );
+
+                                    try {
+
+                                      final credential =
+
+                                      await FirebaseAuth.instance
+                                          .signInWithEmailAndPassword(
+
+                                        email:
+                                        emailController.text.trim(),
+
+                                        password:
+                                        passwordController.text.trim(),
+                                      );
+
+                                      /// RELOAD USER
+                                      await credential.user!.reload();
+
+                                      final user =
+                                          FirebaseAuth.instance.currentUser;
+
+                                      /// EMAIL VERIFIED
+                                      if (user != null &&
+                                          user.emailVerified) {
+
+                                        showCustomSnackBar(
+
+                                          "Login successful. Welcome back!",
+                                        );
+
+                                        await Future.delayed(
+                                          const Duration(seconds: 2),
+                                        );
+
+                                        Navigator.pushReplacement(
+
+                                          context,
+
+                                          MaterialPageRoute(
+
+                                            builder: (context) =>
+                                            const HomePage(),
+                                          ),
+                                        );
+
+                                        /// TODO:
+                                        /// Navigate Home Page
+
+                                      } else {
+
+                                        await FirebaseAuth.instance
+                                            .signOut();
+
+                                        showCustomSnackBar(
+
+                                          "Please verify your email before signing in.",
+                                        );
+                                      }
+
+                                    } on FirebaseAuthException catch (e) {
+
+                                      /// WRONG PASSWORD
+                                      if (e.code == 'wrong-password') {
+
+                                        showCustomSnackBar(
+
+                                          "Incorrect password. Please try again.",
+                                        );
+
+                                      }
+
+                                      /// USER NOT FOUND
+                                      else if (e.code == 'user-not-found') {
+
+                                        showCustomSnackBar(
+
+                                          "No account found with this email.",
+                                        );
+
+                                      }
+
+                                      /// INVALID EMAIL
+                                      else if (e.code == 'invalid-email') {
+
+                                        showCustomSnackBar(
+
+                                          "Invalid email address.",
+                                        );
+
+                                      }
+
+                                      /// INVALID CREDENTIAL
+                                      else if (e.code == 'invalid-credential') {
+
+                                        showCustomSnackBar(
+
+                                          "Email or password is incorrect.",
+                                        );
+
+                                      }
+
+                                      else {
+
+                                        showCustomSnackBar(
+
+                                          e.message ??
+                                              "Login failed.",
+                                        );
+                                      }
+                                    }
                                   },
                                   child: Container(
                 
