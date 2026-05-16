@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:office_meet/Auth/Singin.dart' show SignUpPage;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -420,19 +421,32 @@ class _LoginPageState extends State<LoginPage> {
                 
                                     const SizedBox(width: 6),
                 
-                                    const Text(
-                
-                                      "Sign Up",
-                
-                                      style: TextStyle(
-                
-                                        color:
-                                        Color(0xFF2CE6A6),
-                
-                                        fontWeight:
-                                        FontWeight.bold,
-                                      ),
-                                    ),
+                                     GestureDetector(
+                                       onTap: (){
+                                         Navigator.push(
+
+                                           context,
+
+                                           MaterialPageRoute(
+                                             builder: (context) =>
+                                             const SignUpPage(),
+                                           ),
+                                         );
+                                       },
+                                       child: Text(
+
+                                        "Sign Up",
+
+                                        style: TextStyle(
+
+                                          color:
+                                          Color(0xFF2CE6A6),
+
+                                          fontWeight:
+                                          FontWeight.bold,
+                                        ),
+                                                                           ),
+                                     ),
                                   ],
                                 ),
                               ],

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "953246735182",
+    "project_id": "office-meet-a66eb",
+    "storage_bucket": "office-meet-a66eb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953246735182:android:15e909dd091ce60d6c5c1f",
+        "android_client_info": {
+          "package_name": "com.example.office_meet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhnJ67qHlDxfSjeioYPEGEWUsIIDjjN2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:office_meet/DB/DefaultFirebaseOptions.dart' show DefaultFirebaseOptions;
 import 'package:office_meet/splashscreen/splashscreen.dart' show Splashscreen, SplashScreen;
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+
+    options:
+    DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
