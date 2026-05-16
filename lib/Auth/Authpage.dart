@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:office_meet/Auth/Singin.dart' show SignUpPage;
 import 'package:office_meet/Auth/login.dart' show LoginPage;
 
 class WelcomeScreen extends StatelessWidget {
@@ -415,78 +416,91 @@ class WelcomeScreen extends StatelessWidget {
                       /// =========================
                       /// SIGN UP BUTTON
                       /// =========================
-                      Container(
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(
 
-                        height:
-                        isSmall ? 58 : 66,
+                            context,
 
-                        width: double.infinity,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                              const SignUpPage(),
+                            ),
+                          );
+                        },
+                        child: Container(
 
-                        decoration: BoxDecoration(
+                          height:
+                          isSmall ? 58 : 66,
 
-                          borderRadius:
-                          BorderRadius.circular(40),
+                          width: double.infinity,
 
-                          color: Colors.white10,
+                          decoration: BoxDecoration(
 
-                          border: Border.all(
-                            color: Colors.white12,
+                            borderRadius:
+                            BorderRadius.circular(40),
+
+                            color: Colors.white10,
+
+                            border: Border.all(
+                              color: Colors.white12,
+                            ),
                           ),
-                        ),
 
-                        child: Row(
+                          child: Row(
 
-                          mainAxisAlignment:
-                          MainAxisAlignment
-                              .spaceBetween,
+                            mainAxisAlignment:
+                            MainAxisAlignment
+                                .spaceBetween,
 
-                          children: [
+                            children: [
 
-                            const SizedBox(width: 22),
+                              const SizedBox(width: 22),
 
-                            Text(
+                              Text(
 
-                              "Sign Up",
+                                "Sign Up",
 
-                              style: TextStyle(
+                                style: TextStyle(
 
-                                color: Colors.white,
+                                  color: Colors.white,
 
-                                fontSize:
-                                isSmall ? 18 : 20,
+                                  fontSize:
+                                  isSmall ? 18 : 20,
 
-                                fontWeight:
-                                FontWeight.w600,
-                              ),
-                            ),
-
-                            Container(
-
-                              margin:
-                              const EdgeInsets.all(8),
-
-                              height: 48,
-                              width: 48,
-
-                              decoration: BoxDecoration(
-
-                                shape: BoxShape.circle,
-
-                                color:
-                                const Color(0xFF2CE6A6)
-                                    .withOpacity(0.16),
+                                  fontWeight:
+                                  FontWeight.w600,
+                                ),
                               ),
 
-                              child: const Icon(
+                              Container(
 
-                                Icons
-                                    .arrow_forward_rounded,
+                                margin:
+                                const EdgeInsets.all(8),
 
-                                color:
-                                Color(0xFF2CE6A6),
+                                height: 48,
+                                width: 48,
+
+                                decoration: BoxDecoration(
+
+                                  shape: BoxShape.circle,
+
+                                  color:
+                                  const Color(0xFF2CE6A6)
+                                      .withOpacity(0.16),
+                                ),
+
+                                child: const Icon(
+
+                                  Icons
+                                      .arrow_forward_rounded,
+
+                                  color:
+                                  Color(0xFF2CE6A6),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
 

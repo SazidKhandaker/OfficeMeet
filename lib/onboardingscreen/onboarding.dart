@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:office_meet/Auth/Authpage.dart' show WelcomeScreen;
+import 'package:office_meet/Auth/Authpage.dart' show WelcomeScreen, SignUpPage;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
