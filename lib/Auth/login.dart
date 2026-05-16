@@ -111,322 +111,332 @@ class _LoginPageState extends State<LoginPage> {
               /// =========================
               /// MAIN CARD
               /// =========================
-              /// =========================
-              /// MAIN CARD
-              /// =========================
-              Center(
 
-                child: SingleChildScrollView(
+      SingleChildScrollView(
 
-                  physics:
-                  const BouncingScrollPhysics(),
+        physics:
+        const BouncingScrollPhysics(),
 
-                  child: Padding(
+        child: ConstrainedBox(
 
-                    padding: EdgeInsets.symmetric(
-                      horizontal: size.width * 0.06,
-                    ),
-
-                    child: ClipRRect(
-
-                      borderRadius:
-                      BorderRadius.circular(36),
-
-                      child: BackdropFilter(
-
-                        filter: ImageFilter.blur(
-                          sigmaX: 20,
-                          sigmaY: 20,
-                        ),
-
-                        child: Container(
-
-                          width: double.infinity,
-
-                          /// CARD SMALL KORA
-                          padding: EdgeInsets.symmetric(
-
-                            horizontal:
-                            size.width * 0.06,
-
-                            vertical:
-                            size.height * 0.035,
+          constraints: BoxConstraints(
+            minHeight:
+            MediaQuery.of(context).size.height,
+          ),
+                child: Center(
+                
+                  child: SingleChildScrollView(
+                
+                    physics:
+                    const BouncingScrollPhysics(),
+                
+                    child: Padding(
+                
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.06,
+                      ),
+                
+                      child: ClipRRect(
+                
+                        borderRadius:
+                        BorderRadius.circular(36),
+                
+                        child: BackdropFilter(
+                
+                          filter: ImageFilter.blur(
+                            sigmaX: 20,
+                            sigmaY: 20,
                           ),
-
-                          decoration: BoxDecoration(
-
-                            borderRadius:
-                            BorderRadius.circular(36),
-
-                            color:
-                            Colors.white.withOpacity(0.05),
-
-                            border: Border.all(
-
-                              color:
-                              Colors.white.withOpacity(0.12),
-
-                              width: 1.2,
+                
+                          child: Container(
+                
+                            width: double.infinity,
+                
+                            /// CARD SMALL KORA
+                            padding: EdgeInsets.symmetric(
+                
+                              horizontal:
+                              size.width * 0.06,
+                
+                              vertical:
+                              size.height * 0.035,
                             ),
-                          ),
-
-                          child: Column(
-
-                            mainAxisSize:
-                            MainAxisSize.min,
-
-                            children: [
-
-                              /// TITLE
-                              ShaderMask(
-
-                                shaderCallback: (bounds) {
-
-                                  return const LinearGradient(
-
-                                    colors: [
-
-                                      Color(0xFF2CE6A6),
-
-                                      Color(0xFF8BFFD8),
-                                    ],
-                                  ).createShader(bounds);
-                                },
-
-                                child: Text(
-
-                                  "Welcome Back",
-
+                
+                            decoration: BoxDecoration(
+                
+                              borderRadius:
+                              BorderRadius.circular(36),
+                
+                              color:
+                              Colors.white.withOpacity(0.05),
+                
+                              border: Border.all(
+                
+                                color:
+                                Colors.white.withOpacity(0.12),
+                
+                                width: 1.2,
+                              ),
+                            ),
+                
+                            child: Column(
+                
+                              mainAxisSize:
+                              MainAxisSize.min,
+                
+                              children: [
+                
+                                /// TITLE
+                                ShaderMask(
+                
+                                  shaderCallback: (bounds) {
+                
+                                    return const LinearGradient(
+                
+                                      colors: [
+                
+                                        Color(0xFF2CE6A6),
+                
+                                        Color(0xFF8BFFD8),
+                                      ],
+                                    ).createShader(bounds);
+                                  },
+                
+                                  child: Text(
+                
+                                    "Welcome Back",
+                
+                                    textAlign:
+                                    TextAlign.center,
+                
+                                    style: TextStyle(
+                
+                                      color: Colors.white,
+                
+                                      fontSize:
+                                      isSmall ? 30 : 38,
+                
+                                      fontWeight:
+                                      FontWeight.bold,
+                
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                ),
+                
+                                SizedBox(
+                                    height:
+                                    size.height * 0.012),
+                
+                                /// SUBTITLE
+                                Text(
+                
+                                  "Sign in to continue workspace collaboration.",
+                
                                   textAlign:
                                   TextAlign.center,
-
+                
                                   style: TextStyle(
-
-                                    color: Colors.white,
-
-                                    fontSize:
-                                    isSmall ? 30 : 38,
-
-                                    fontWeight:
-                                    FontWeight.bold,
-
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(
-                                  height:
-                                  size.height * 0.012),
-
-                              /// SUBTITLE
-                              Text(
-
-                                "Sign in to continue workspace collaboration.",
-
-                                textAlign:
-                                TextAlign.center,
-
-                                style: TextStyle(
-
-                                  color:
-                                  const Color(0xFF94A3B8),
-
-                                  fontSize:
-                                  isSmall ? 13 : 15,
-
-                                  height: 1.5,
-                                ),
-                              ),
-
-                              SizedBox(
-                                  height:
-                                  size.height * 0.04),
-
-                              /// EMAIL
-                              buildInputField(
-
-                                hint: "Email Address",
-
-                                icon: Icons.email_outlined,
-
-                                controller: emailController,
-                              ),
-
-                              SizedBox(
-                                  height:
-                                  size.height * 0.02),
-
-                              /// PASSWORD
-                              buildPasswordField(
-                                controller: passwordController,
-                              ),
-
-                              SizedBox(
-                                  height:
-                                  size.height * 0.015),
-
-                              /// FORGOT PASSWORD
-                              Align(
-
-                                alignment:
-                                Alignment.centerRight,
-
-                                child: Text(
-
-                                  "Forgot Password?",
-
-                                  style: TextStyle(
-
+                
                                     color:
-                                    Colors.white70,
-
+                                    const Color(0xFF94A3B8),
+                
                                     fontSize:
-                                    isSmall ? 13 : 14,
+                                    isSmall ? 13 : 15,
+                
+                                    height: 1.5,
                                   ),
                                 ),
-                              ),
-
-                              SizedBox(
-                                  height:
-                                  size.height * 0.035),
-
-                              /// LOGIN BUTTON
-                              GestureDetector(
-                                onTap: () {
-
-                                  /// EMPTY CHECK
-                                  if (emailController.text.trim().isEmpty ||
-                                      passwordController.text.trim().isEmpty) {
-
-                                    showCustomSnackBar(
-                                      "Please enter your email and password.",
-                                    );
-
-                                    return;
-                                  }
-
-                                  /// EMAIL DOMAIN CHECK
-                                  if (!emailController.text
-                                      .trim()
-                                      .endsWith("@acotegroup.com")) {
-
-                                    showCustomSnackBar(
-                                      "Please use your official Acote Group email address.",
-                                    );
-
-                                    return;
-                                  }
-
-                                  /// SUCCESS
-                                  showCustomSnackBar(
-                                    "Login successful. Welcome back!",
-                                  );
-                                },
-                                child: Container(
-
-                                  height:
-                                  isSmall ? 54 : 60,
-
-                                  width: double.infinity,
-
-                                  decoration: BoxDecoration(
-
-                                    borderRadius:
-                                    BorderRadius.circular(40),
-
-                                    gradient:
-                                    const LinearGradient(
-
-                                      colors: [
-
-                                        Color(0xFF2CE6A6),
-
-                                        Color(0xFF16A34A),
-                                      ],
-                                    ),
-
-                                    boxShadow: [
-
-                                      BoxShadow(
-
-                                        color:
-                                        const Color(0xFF2CE6A6)
-                                            .withOpacity(0.35),
-
-                                        blurRadius: 22,
-                                        spreadRadius: 1,
-                                      ),
-                                    ],
-                                  ),
-
-                                  child: Center(
-
-                                    child: Text(
-
-                                      "SIGN IN",
-
-                                      style: TextStyle(
-
-                                        color: Colors.white,
-
-                                        fontSize:
-                                        isSmall ? 16 : 18,
-
-                                        fontWeight:
-                                        FontWeight.bold,
-
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
-                                  ),
+                
+                                SizedBox(
+                                    height:
+                                    size.height * 0.04),
+                
+                                /// EMAIL
+                                buildInputField(
+                
+                                  hint: "Email Address",
+                
+                                  icon: Icons.email_outlined,
+                
+                                  controller: emailController,
                                 ),
-                              ),
-
-                              SizedBox(
-                                  height:
-                                  size.height * 0.025),
-
-                              /// SIGNUP
-                              Row(
-
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
-
-                                children: [
-
-                                  Text(
-
-                                    "Don't have an account?",
-
+                
+                                SizedBox(
+                                    height:
+                                    size.height * 0.02),
+                
+                                /// PASSWORD
+                                buildPasswordField(
+                                  controller: passwordController,
+                                ),
+                
+                                SizedBox(
+                                    height:
+                                    size.height * 0.015),
+                
+                                /// FORGOT PASSWORD
+                                Align(
+                
+                                  alignment:
+                                  Alignment.centerRight,
+                
+                                  child: Text(
+                
+                                    "Forgot Password?",
+                
                                     style: TextStyle(
-
+                
                                       color:
                                       Colors.white70,
-
+                
                                       fontSize:
                                       isSmall ? 13 : 14,
                                     ),
                                   ),
-
-                                  const SizedBox(width: 6),
-
-                                  const Text(
-
-                                    "Sign Up",
-
-                                    style: TextStyle(
-
-                                      color:
-                                      Color(0xFF2CE6A6),
-
-                                      fontWeight:
-                                      FontWeight.bold,
+                                ),
+                
+                                SizedBox(
+                                    height:
+                                    size.height * 0.035),
+                
+                                /// LOGIN BUTTON
+                                GestureDetector(
+                                  onTap: () {
+                
+                                    /// EMPTY CHECK
+                                    if (emailController.text.trim().isEmpty ||
+                                        passwordController.text.trim().isEmpty) {
+                
+                                      showCustomSnackBar(
+                                        "Please enter your email and password.",
+                                      );
+                
+                                      return;
+                                    }
+                
+                                    /// EMAIL DOMAIN CHECK
+                                    if (!emailController.text
+                                        .trim()
+                                        .endsWith("@acotegroup.com")) {
+                
+                                      showCustomSnackBar(
+                                        "Please use your official Acote Group email address.",
+                                      );
+                
+                                      return;
+                                    }
+                
+                                    /// SUCCESS
+                                    showCustomSnackBar(
+                                      "Login successful. Welcome back!",
+                                    );
+                                  },
+                                  child: Container(
+                
+                                    height:
+                                    isSmall ? 54 : 60,
+                
+                                    width: double.infinity,
+                
+                                    decoration: BoxDecoration(
+                
+                                      borderRadius:
+                                      BorderRadius.circular(40),
+                
+                                      gradient:
+                                      const LinearGradient(
+                
+                                        colors: [
+                
+                                          Color(0xFF2CE6A6),
+                
+                                          Color(0xFF16A34A),
+                                        ],
+                                      ),
+                
+                                      boxShadow: [
+                
+                                        BoxShadow(
+                
+                                          color:
+                                          const Color(0xFF2CE6A6)
+                                              .withOpacity(0.35),
+                
+                                          blurRadius: 22,
+                                          spreadRadius: 1,
+                                        ),
+                                      ],
+                                    ),
+                
+                                    child: Center(
+                
+                                      child: Text(
+                
+                                        "SIGN IN",
+                
+                                        style: TextStyle(
+                
+                                          color: Colors.white,
+                
+                                          fontSize:
+                                          isSmall ? 16 : 18,
+                
+                                          fontWeight:
+                                          FontWeight.bold,
+                
+                                          letterSpacing: 1,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ],
+                                ),
+                
+                                SizedBox(
+                                    height:
+                                    size.height * 0.025),
+                
+                                /// SIGNUP
+                                Row(
+                
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                
+                                  children: [
+                
+                                    Text(
+                
+                                      "Don't have an account?",
+                
+                                      style: TextStyle(
+                
+                                        color:
+                                        Colors.white70,
+                
+                                        fontSize:
+                                        isSmall ? 13 : 14,
+                                      ),
+                                    ),
+                
+                                    const SizedBox(width: 6),
+                
+                                    const Text(
+                
+                                      "Sign Up",
+                
+                                      style: TextStyle(
+                
+                                        color:
+                                        Color(0xFF2CE6A6),
+                
+                                        fontWeight:
+                                        FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -434,7 +444,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-            ],
+      )],
           ),
         ),
       ),

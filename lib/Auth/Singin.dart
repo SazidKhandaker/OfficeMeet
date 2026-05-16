@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:office_meet/Auth/login.dart' show LoginPage;
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -625,19 +626,32 @@ class _SignUpPageState extends State<SignUpPage> {
               
                                   const SizedBox(width: 6),
               
-                                  const Text(
-              
-                                    "Sign In",
-              
-                                    style: TextStyle(
-              
-                                      color:
-                                      Color(0xFF2CE6A6),
-              
-                                      fontWeight:
-                                      FontWeight.bold,
-                                    ),
-                                  ),
+                                   GestureDetector(
+                                     onTap: (){
+                                       Navigator.push(
+
+                                         context,
+
+                                         MaterialPageRoute(
+                                           builder: (context) =>
+                                           const LoginPage(),
+                                         ),
+                                       );
+                                     },
+                                     child: Text(
+
+                                      "Sign In",
+
+                                      style: TextStyle(
+
+                                        color:
+                                        Color(0xFF2CE6A6),
+
+                                        fontWeight:
+                                        FontWeight.bold,
+                                      ),
+                                                                       ),
+                                   ),
                                 ],
                               ),
                             ],
