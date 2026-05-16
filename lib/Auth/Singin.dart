@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:flutter/material.dart';
 import 'package:office_meet/Auth/login.dart' show LoginPage;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -466,7 +468,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               /// SIGNUP BUTTON
                               GestureDetector(
               
-                                onTap: () {
+                                onTap: ()async  {
               
                                   if (nameController.text
                                       .trim()
@@ -531,10 +533,69 @@ class _SignUpPageState extends State<SignUpPage> {
               
                                     return;
                                   }
-              
-                                  showCustomSnackBar(
-                                    "Account created successfully!",
-                                  );
+
+                                  try {
+
+                                    final credential =
+                                    await FirebaseAuth.instance
+                                        .createUserWithEmailAndPassword(
+
+                                      email:
+                                      emailController.text.trim(),
+
+                                      password:
+                                      passwordController.text.trim(),
+                                    );
+
+                                    await credential.user!
+                                        .sendEmailVerification();
+
+                                    /// SAVE USER DATA
+                                    await FirebaseFirestore.instance
+                                        .collection("users")
+                                        .doc(credential.user!.uid)
+                                        .set({
+
+                                      "fullName":
+                                      nameController.text.trim(),
+
+                                      "email":
+                                      emailController.text.trim(),
+
+                                      "createdAt":
+                                      DateTime.now(),
+
+                                      "verified":
+                                      false,
+                                    });
+
+                                    showCustomSnackBar(
+
+                                      "Verification email has been sent. Please verify your account before signing in.",
+                                    );
+
+                                    await Future.delayed(
+                                      const Duration(seconds: 2),
+                                    );
+
+                                    Navigator.pushReplacement(
+
+                                      context,
+
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                        const LoginPage(),
+                                      ),
+                                    );
+
+                                  } on FirebaseAuthException catch (e) {
+
+                                    showCustomSnackBar(
+
+                                      e.message ??
+                                          "Signup failed.",
+                                    );
+                                  }
                                 },
               
                                 child: Container(

@@ -37,6 +37,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   firebase_core: ^4.9.0
   firebase_auth: ^6.5.1
+  cloud_firestore: ^6.4.1
 
 
 
