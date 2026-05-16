@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:office_meet/Auth/Authpage.dart' show WelcomeScreen;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -688,7 +689,15 @@ class _OnboardingScreenState
                               child: GestureDetector(
 
                                 onTap: () {
+                                  Navigator.pushReplacement(
 
+                                    context,
+
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                      const WelcomeScreen(),
+                                    ),
+                                  );
                                 },
 
                                 child: Container(
@@ -743,17 +752,28 @@ class _OnboardingScreenState
 
                                 onTap: () {
 
-                                  if (!isLastPage) {
+                                  /// LAST PAGE
+                                  if (isLastPage) {
+
+                                    Navigator.pushReplacement(
+
+                                      context,
+
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                        const WelcomeScreen(),
+                                      ),
+                                    );
+
+                                  } else {
 
                                     _controller.nextPage(
 
-                                      duration:
-                                      const Duration(
-                                          milliseconds:
-                                          500),
+                                      duration: const Duration(
+                                        milliseconds: 500,
+                                      ),
 
-                                      curve:
-                                      Curves.easeInOut,
+                                      curve: Curves.easeInOut,
                                     );
                                   }
                                 },
