@@ -1,12 +1,16 @@
 import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:office_meet/profile/editprofile.dart' show EditProfilePage;
+
+import 'package:office_meet/profile/editprofile.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+
+  const ProfilePage({
+    super.key,
+  });
 
   @override
   State<ProfilePage> createState() =>
@@ -15,63 +19,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState
     extends State<ProfilePage> {
-
-  String fullName = "Loading...";
-  String email = "";
-  String designation =
-      "Flutter Developer";
-
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-
-    getUserData();
-  }
-
-  /// =========================
-  /// GET USER DATA
-  /// =========================
-  Future<void> getUserData() async {
-
-    try {
-
-      final uid =
-          FirebaseAuth.instance.currentUser!.uid;
-
-      final doc =
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(uid)
-          .get();
-
-      if (doc.exists) {
-
-        setState(() {
-
-          fullName =
-              doc["fullName"] ?? "";
-
-          email =
-              doc["email"] ?? "";
-
-          designation =
-              doc["designation"] ??
-                  "Flutter Developer";
-
-          isLoading = false;
-        });
-      }
-
-    } catch (e) {
-
-      setState(() {
-
-        isLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,87 +34,301 @@ class _ProfilePageState
       backgroundColor:
       const Color(0xFF0B0618),
 
-      body: SafeArea(
+      body:
+      StreamBuilder<DocumentSnapshot>(
 
-        child: Stack(
-          children: [
+        stream:
+        FirebaseFirestore
+            .instance
+            .collection("users")
+            .doc(
+          FirebaseAuth
+              .instance
+              .currentUser!
+              .uid,
+        )
+            .snapshots(),
 
-            /// =========================
-            /// BACKGROUND GLOW
-            /// =========================
-            Positioned(
+        builder:
+            (context, snapshot) {
 
-              top: -120,
-              left: -80,
+          /// =========================
+          /// LOADING
+          /// =========================
+          if (snapshot.connectionState ==
+              ConnectionState.waiting) {
 
-              child: glowCircle(
-                260,
-                const Color(
-                  0xFFB026FF,
+            return const Center(
+
+              child:
+              CircularProgressIndicator(),
+            );
+          }
+
+          /// =========================
+          /// NO DATA
+          /// =========================
+          if (!snapshot.hasData ||
+              !snapshot.data!.exists) {
+
+            return const Center(
+
+              child: Text(
+
+                "No Profile Data",
+
+                style: TextStyle(
+                  color:
+                  Colors.white,
                 ),
               ),
-            ),
+            );
+          }
 
-            Positioned(
+          /// =========================
+          /// FIREBASE DATA
+          /// =========================
+          final doc =
+          snapshot.data!;
 
-              bottom: -100,
-              right: -70,
+          final fullName =
+              doc["fullName"] ?? "";
 
-              child: glowCircle(
-                220,
-                const Color(
-                  0xFF00E5FF,
+          final designation =
+              doc["designation"] ?? "";
+
+          final department =
+              doc["department"] ?? "";
+
+          final joiningDate =
+              doc["joiningDate"] ?? "";
+
+          final profileImage =
+              doc["profileImage"] ?? "";
+
+          final email =
+              FirebaseAuth
+                  .instance
+                  .currentUser
+                  ?.email ?? "";
+
+          return SafeArea(
+
+            child: Stack(
+              children: [
+
+                /// =========================
+                /// BACKGROUND GLOW
+                /// =========================
+                Positioned(
+
+                  top: -120,
+                  left: -80,
+
+                  child: glowCircle(
+
+                    260,
+
+                    const Color(
+                      0xFFB026FF,
+                    ),
+                  ),
                 ),
-              ),
-            ),
 
-            /// =========================
-            /// MAIN BODY
-            /// =========================
-            SingleChildScrollView(
+                Positioned(
 
-              physics:
-              const BouncingScrollPhysics(),
+                  bottom: -100,
+                  right: -70,
 
-              child: Padding(
+                  child: glowCircle(
 
-                padding:
-                EdgeInsets.symmetric(
+                    220,
 
-                  horizontal:
-                  width * 0.06,
-
-                  vertical:
-                  height * 0.02,
+                    const Color(
+                      0xFF00E5FF,
+                    ),
+                  ),
                 ),
 
-                child: Column(
+                /// =========================
+                /// MAIN BODY
+                /// =========================
+                SingleChildScrollView(
 
-                  children: [
+                  physics:
+                  const BouncingScrollPhysics(),
 
-                    /// =========================
-                    /// TOP BAR
-                    /// =========================
-                    Row(
+                  child: Padding(
 
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                    padding:
+                    EdgeInsets.symmetric(
+
+                      horizontal:
+                      width * 0.06,
+
+                      vertical:
+                      height * 0.02,
+                    ),
+
+                    child: Column(
 
                       children: [
 
-                        topButton(
-                          Icons.arrow_back_ios_new,
-                              () {
+                        /// =========================
+                        /// TOP BAR
+                        /// =========================
+                        Row(
 
-                            Navigator.pop(
-                              context,
-                            );
-                          },
+                          mainAxisAlignment:
+                          MainAxisAlignment
+                              .spaceBetween,
+
+                          children: [
+
+                            topButton(
+
+                              Icons
+                                  .arrow_back_ios_new,
+
+                                  () {
+
+                                Navigator.pop(
+                                  context,
+                                );
+                              },
+                            ),
+
+                            Text(
+
+                              "Profile",
+
+                              style: TextStyle(
+
+                                color:
+                                Colors.white,
+
+                                fontWeight:
+                                FontWeight.bold,
+
+                                fontSize:
+                                width * 0.06,
+                              ),
+                            ),
+
+                            topButton(
+
+                              Icons
+                                  .settings_outlined,
+
+                                  () {},
+                            ),
+                          ],
                         ),
 
+                        SizedBox(
+                          height:
+                          height * 0.05,
+                        ),
+
+                        /// =========================
+                        /// PROFILE IMAGE
+                        /// =========================
+                        Container(
+
+                          padding:
+                          const EdgeInsets.all(
+                            4,
+                          ),
+
+                          decoration:
+                          BoxDecoration(
+
+                            shape:
+                            BoxShape.circle,
+
+                            gradient:
+                            const LinearGradient(
+
+                              colors: [
+
+                                Color(
+                                  0xFF00E5FF,
+                                ),
+
+                                Color(
+                                  0xFFB026FF,
+                                ),
+                              ],
+                            ),
+
+                            boxShadow: [
+
+                              BoxShadow(
+
+                                color:
+                                const Color(
+                                  0xFF00E5FF,
+                                ).withOpacity(
+                                  0.45,
+                                ),
+
+                                blurRadius:
+                                35,
+                              ),
+                            ],
+                          ),
+
+                          child: CircleAvatar(
+
+                            radius:
+                            width * 0.16,
+
+                            backgroundColor:
+                            Colors.black,
+
+                            backgroundImage:
+                            profileImage
+                                .isNotEmpty
+
+                                ? NetworkImage(
+                              profileImage,
+                            )
+
+                                : null,
+
+                            child:
+                            profileImage
+                                .isEmpty
+
+                                ? Icon(
+
+                              Icons.person,
+
+                              color:
+                              Colors.white,
+
+                              size:
+                              width * 0.12,
+                            )
+
+                                : null,
+                          ),
+                        ),
+
+                        SizedBox(
+                          height:
+                          height * 0.03,
+                        ),
+
+                        /// =========================
+                        /// FULL NAME
+                        /// =========================
                         Text(
 
-                          "Profile",
+                          fullName,
+
+                          textAlign:
+                          TextAlign.center,
 
                           style: TextStyle(
 
@@ -178,318 +339,311 @@ class _ProfilePageState
                             FontWeight.bold,
 
                             fontSize:
-                            width * 0.06,
+                            width * 0.08,
                           ),
                         ),
 
-                        topButton(
-                          Icons.settings_outlined,
-                              () {},
+                        SizedBox(
+                          height:
+                          height * 0.012,
                         ),
-                      ],
-                    ),
 
-                    SizedBox(
-                      height:
-                      height * 0.05,
-                    ),
+                        /// =========================
+                        /// DESIGNATION
+                        /// =========================
+                        if (designation
+                            .isNotEmpty)
 
-                    /// =========================
-                    /// PROFILE IMAGE
-                    /// =========================
-                    Container(
+                          Text(
 
-                      padding:
-                      const EdgeInsets.all(
-                        4,
-                      ),
+                            designation,
 
-                      decoration: BoxDecoration(
+                            style: TextStyle(
 
-                        shape:
-                        BoxShape.circle,
+                              color:
+                              const Color(
+                                0xFF00E5FF,
+                              ),
 
-                        gradient:
-                        const LinearGradient(
+                              fontSize:
+                              width * 0.042,
 
-                          colors: [
+                              fontWeight:
+                              FontWeight.w600,
+                            ),
+                          ),
 
-                            Color(
-                              0xFF00E5FF,
+                        SizedBox(
+                          height:
+                          height * 0.012,
+                        ),
+
+                        /// =========================
+                        /// EMAIL
+                        /// =========================
+                        Text(
+
+                          email,
+
+                          style: TextStyle(
+
+                            color:
+                            Colors.white60,
+
+                            fontSize:
+                            width * 0.036,
+                          ),
+                        ),
+
+                        /// =========================
+                        /// DEPARTMENT
+                        /// =========================
+                        if (department
+                            .isNotEmpty)
+
+                          Padding(
+
+                            padding:
+                            const EdgeInsets.only(
+                              top: 10,
                             ),
 
-                            Color(
-                              0xFFB026FF,
+                            child: Text(
+
+                              department,
+
+                              style: TextStyle(
+
+                                color:
+                                Colors.greenAccent,
+
+                                fontWeight:
+                                FontWeight.w600,
+
+                                fontSize:
+                                width * 0.040,
+                              ),
+                            ),
+                          ),
+
+                        /// =========================
+                        /// JOINING DATE
+                        /// =========================
+                        if (joiningDate
+                            .isNotEmpty)
+
+                          Padding(
+
+                            padding:
+                            const EdgeInsets.only(
+                              top: 10,
+                            ),
+
+                            child: Text(
+
+                              "Joined $joiningDate",
+
+                              style: TextStyle(
+
+                                color:
+                                Colors.white54,
+
+                                fontSize:
+                                width * 0.034,
+                              ),
+                            ),
+                          ),
+
+                        SizedBox(
+                          height:
+                          height * 0.05,
+                        ),
+
+                        /// =========================
+                        /// STATS
+                        /// =========================
+                        Row(
+
+                          children: [
+
+                            Expanded(
+                              child:
+                              statCard(
+
+                                "24",
+
+                                "Meetings",
+
+                                width,
+                              ),
+                            ),
+
+                            SizedBox(
+                              width:
+                              width * 0.03,
+                            ),
+
+                            Expanded(
+                              child:
+                              statCard(
+
+                                "Acote",
+
+                                "No1 Project",
+
+                                width,
+                              ),
+                            ),
+
+                            SizedBox(
+                              width:
+                              width * 0.03,
+                            ),
+
+                            Expanded(
+                              child:
+                              statCard(
+
+                                "46",
+
+                                "Teams",
+
+                                width,
+                              ),
                             ),
                           ],
                         ),
 
-                        boxShadow: [
-
-                          BoxShadow(
-
-                            color:
-                            const Color(
-                              0xFF00E5FF,
-                            ).withOpacity(
-                              0.5,
-                            ),
-
-                            blurRadius:
-                            30,
-                          ),
-                        ],
-                      ),
-
-                      child: CircleAvatar(
-
-                        radius:
-                        width * 0.16,
-
-                        backgroundColor:
-                        Colors.black,
-
-                        backgroundImage:
-                        const AssetImage(
-                          "assets/images/profile.jpg",
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.025,
-                    ),
-
-                    /// =========================
-                    /// NAME
-                    /// =========================
-                    Text(
-
-                      fullName,
-
-                      textAlign:
-                      TextAlign.center,
-
-                      style: TextStyle(
-
-                        color:
-                        Colors.white,
-
-                        fontWeight:
-                        FontWeight.bold,
-
-                        fontSize:
-                        width * 0.08,
-                      ),
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.008,
-                    ),
-
-                    /// DESIGNATION
-                    Text(
-
-                      designation,
-
-                      style: TextStyle(
-
-                        color:
-                        const Color(
-                          0xFF00E5FF,
+                        SizedBox(
+                          height:
+                          height * 0.05,
                         ),
 
-                        fontSize:
-                        width * 0.042,
+                        /// =========================
+                        /// EDIT PROFILE
+                        /// =========================
+                        glassActionCard(
 
-                        fontWeight:
-                        FontWeight.w500,
-                      ),
-                    ),
+                          icon:
+                          Icons.edit_outlined,
 
-                    SizedBox(
-                      height:
-                      height * 0.008,
-                    ),
+                          title:
+                          "Edit Profile",
 
-                    /// EMAIL
-                    Text(
-
-                      email,
-
-                      style: TextStyle(
-
-                        color:
-                        Colors.white60,
-
-                        fontSize:
-                        width * 0.036,
-                      ),
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.045,
-                    ),
-
-                    /// =========================
-                    /// STATS
-                    /// =========================
-                    Row(
-
-                      children: [
-
-                        Expanded(
-                          child: statCard(
-                            "24",
-                            "Meetings",
-                            width,
+                          color:
+                          const Color(
+                            0xFF00E5FF,
                           ),
+
+                          onTap: () async {
+                            final result =
+                                await Navigator.push(
+
+                              context,
+
+                              MaterialPageRoute(
+
+                                builder:
+                                    (context) =>
+
+                                const EditProfilePage(),
+                              ),
+                            );
+
+                            if (result == true) {
+
+                              setState(() {});
+                            }
+                          },
                         ),
 
                         SizedBox(
-                          width:
-                          width * 0.03,
+                          height:
+                          height * 0.02,
                         ),
 
-                        Expanded(
-                          child: statCard(
-                            "85",
-                            "Projects",
-                            width,
+                        /// =========================
+                        /// WORKSPACE
+                        /// =========================
+                        glassActionCard(
+
+                          icon:
+                          Icons.workspaces_outline,
+
+                          title:
+                          "Workspace",
+
+                          color:
+                          const Color(
+                            0xFFB026FF,
                           ),
+
+                          onTap: () {},
                         ),
 
                         SizedBox(
-                          width:
-                          width * 0.03,
+                          height:
+                          height * 0.02,
                         ),
 
-                        Expanded(
-                          child: statCard(
-                            "46",
-                            "Teams",
-                            width,
+                        /// =========================
+                        /// SECURITY
+                        /// =========================
+                        glassActionCard(
+
+                          icon:
+                          Icons.security,
+
+                          title:
+                          "Privacy & Security",
+
+                          color:
+                          const Color(
+                            0xFFFF5ACD,
                           ),
+
+                          onTap: () {},
+                        ),
+
+                        SizedBox(
+                          height:
+                          height * 0.02,
+                        ),
+
+                        /// =========================
+                        /// LOGOUT
+                        /// =========================
+                        glassActionCard(
+
+                          icon:
+                          Icons.logout_rounded,
+
+                          title:
+                          "Logout",
+
+                          color:
+                          Colors.redAccent,
+
+                          onTap: () async {
+
+                            await FirebaseAuth
+                                .instance
+                                .signOut();
+                          },
+                        ),
+
+                        SizedBox(
+                          height:
+                          height * 0.05,
                         ),
                       ],
                     ),
-
-                    SizedBox(
-                      height:
-                      height * 0.045,
-                    ),
-
-                    /// =========================
-                    /// ACTION CARD
-                    /// =========================
-                    glassActionCard(
-
-                      icon:
-                      Icons.edit_outlined,
-
-                      title:
-                      "Edit Profile",
-
-                      color:
-                      const Color(
-                        0xFF00E5FF,
-                      ),
-
-                      onTap: () {
-                        Navigator.push(
-
-                          context,
-
-                          MaterialPageRoute(
-
-                            builder: (context) =>
-                            const EditProfilePage(),
-                          ),
-                        );
-
-
-                      },
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.02,
-                    ),
-
-                    glassActionCard(
-
-                      icon:
-                      Icons.workspaces_outline,
-
-                      title:
-                      "Workspace",
-
-                      color:
-                      const Color(
-                        0xFFB026FF,
-                      ),
-
-                      onTap: () {},
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.02,
-                    ),
-
-                    glassActionCard(
-
-                      icon:
-                      Icons.security,
-
-                      title:
-                      "Privacy & Security",
-
-                      color:
-                      const Color(
-                        0xFFFF5ACD,
-                      ),
-
-                      onTap: () {},
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.02,
-                    ),
-
-                    glassActionCard(
-
-                      icon:
-                      Icons.logout_rounded,
-
-                      title:
-                      "Logout",
-
-                      color:
-                      Colors.redAccent,
-
-                      onTap: () async {
-
-                        await FirebaseAuth
-                            .instance
-                            .signOut();
-                      },
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.04,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -514,6 +668,7 @@ class _ProfilePageState
         child: BackdropFilter(
 
           filter: ImageFilter.blur(
+
             sigmaX: 20,
             sigmaY: 20,
           ),
@@ -523,7 +678,8 @@ class _ProfilePageState
             height: 52,
             width: 52,
 
-            decoration: BoxDecoration(
+            decoration:
+            BoxDecoration(
 
               borderRadius:
               BorderRadius.circular(
@@ -531,16 +687,9 @@ class _ProfilePageState
               ),
 
               color:
-              Colors.white.withOpacity(
+              Colors.white
+                  .withOpacity(
                 0.08,
-              ),
-
-              border: Border.all(
-
-                color:
-                Colors.white.withOpacity(
-                  0.08,
-                ),
               ),
             ),
 
@@ -548,7 +697,8 @@ class _ProfilePageState
 
               icon,
 
-              color: Colors.white,
+              color:
+              Colors.white,
             ),
           ),
         ),
@@ -573,6 +723,7 @@ class _ProfilePageState
       child: BackdropFilter(
 
         filter: ImageFilter.blur(
+
           sigmaX: 25,
           sigmaY: 25,
         ),
@@ -584,22 +735,18 @@ class _ProfilePageState
             vertical: 22,
           ),
 
-          decoration: BoxDecoration(
+          decoration:
+          BoxDecoration(
 
             borderRadius:
-            BorderRadius.circular(24),
-
-            color:
-            Colors.white.withOpacity(
-              0.08,
+            BorderRadius.circular(
+              24,
             ),
 
-            border: Border.all(
-
-              color:
-              Colors.white.withOpacity(
-                0.08,
-              ),
+            color:
+            Colors.white
+                .withOpacity(
+              0.08,
             ),
           ),
 
@@ -613,13 +760,23 @@ class _ProfilePageState
                 style: TextStyle(
 
                   color:
-                  Colors.white,
+
+                  value == "Acote"
+
+                      ? Colors.greenAccent
+
+                      : Colors.white,
 
                   fontWeight:
                   FontWeight.bold,
 
                   fontSize:
-                  width * 0.065,
+
+                  value == "Acote"
+
+                      ? width * 0.065
+
+                      : width * 0.065,
                 ),
               ),
 
@@ -630,6 +787,9 @@ class _ProfilePageState
               Text(
 
                 title,
+
+                textAlign:
+                TextAlign.center,
 
                 style: TextStyle(
 
@@ -673,6 +833,7 @@ class _ProfilePageState
         child: BackdropFilter(
 
           filter: ImageFilter.blur(
+
             sigmaX: 20,
             sigmaY: 20,
           ),
@@ -686,7 +847,8 @@ class _ProfilePageState
               vertical: 20,
             ),
 
-            decoration: BoxDecoration(
+            decoration:
+            BoxDecoration(
 
               borderRadius:
               BorderRadius.circular(
@@ -694,30 +856,10 @@ class _ProfilePageState
               ),
 
               color:
-              Colors.white.withOpacity(
+              Colors.white
+                  .withOpacity(
                 0.08,
               ),
-
-              border: Border.all(
-
-                color:
-                color.withOpacity(
-                  0.35,
-                ),
-              ),
-
-              boxShadow: [
-
-                BoxShadow(
-
-                  color:
-                  color.withOpacity(
-                    0.15,
-                  ),
-
-                  blurRadius: 25,
-                ),
-              ],
             ),
 
             child: Row(
@@ -731,7 +873,8 @@ class _ProfilePageState
                     12,
                   ),
 
-                  decoration: BoxDecoration(
+                  decoration:
+                  BoxDecoration(
 
                     shape:
                     BoxShape.circle,
@@ -746,7 +889,8 @@ class _ProfilePageState
 
                     icon,
 
-                    color: color,
+                    color:
+                    color,
                   ),
                 ),
 
@@ -760,7 +904,8 @@ class _ProfilePageState
 
                     title,
 
-                    style: const TextStyle(
+                    style:
+                    const TextStyle(
 
                       color:
                       Colors.white,
@@ -803,22 +948,28 @@ class _ProfilePageState
       height: size,
       width: size,
 
-      decoration: BoxDecoration(
+      decoration:
+      BoxDecoration(
 
         shape:
         BoxShape.circle,
 
         color:
-        color.withOpacity(0.25),
+        color.withOpacity(
+          0.25,
+        ),
 
         boxShadow: [
 
           BoxShadow(
 
             color:
-            color.withOpacity(0.45),
+            color.withOpacity(
+              0.45,
+            ),
 
-            blurRadius: 120,
+            blurRadius:
+            120,
           ),
         ],
       ),

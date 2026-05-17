@@ -20,7 +20,30 @@ class EditProfilePage
   createState() =>
       _EditProfilePageState();
 }
+String? selectedDepartment;
 
+final List<String> departments = [
+
+  "Nurion Lab",
+
+  "Nurion Studio",
+
+  "Ui/UX",
+
+  "IT",
+
+  "Digital Marketing",
+
+  "Account & Finance",
+
+  "HR Department",
+
+  "Business Development",
+
+  "CEO",
+
+  "Other Department",
+];
 class _EditProfilePageState
     extends State<EditProfilePage> {
 
@@ -89,6 +112,8 @@ class _EditProfilePageState
 
         profileImage =
             userData["profileImage"] ?? "";
+        selectedDepartment =
+        userData["department"];
       }
 
       setState(() {
@@ -207,11 +232,25 @@ class _EditProfilePageState
       customSnackBar(
         "Profile updated successfully",
       );
+      Future.delayed(
+        const Duration(milliseconds: 800),
+            () {
+
+          Navigator.pop(context);
+        },
+      );
 
     } catch (e) {
 
       customSnackBar(
         "Something went wrong",
+      );
+    }
+    if (mounted) {
+
+      Navigator.pop(
+        context,
+        true,
       );
     }
   }
@@ -628,7 +667,7 @@ class _EditProfilePageState
 
                 SizedBox(
                   height:
-                  height * 0.06,
+                  height * 0.03,
                 ),
                 /// =========================
                 /// DEPARTMENT
@@ -738,12 +777,9 @@ class _EditProfilePageState
 
                 SizedBox(
                   height:
-                  height * 0.03,
+                  height * 0.05,
                 ),
-                SizedBox(
-                  height:
-                  height * 0.06,
-                ),
+
                 /// =========================
                 /// SAVE BUTTON
                 /// =========================
