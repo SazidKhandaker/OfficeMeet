@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,53 @@ class _HomePageState extends State<HomePage> {
 
   int currentIndex = 0;
 
+  String userName = "User";
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getUserData();
+  }
+
+  /// =========================
+  /// GET USER DATA
+  /// =========================
+  Future<void> getUserData() async {
+
+    try {
+
+      final uid =
+          FirebaseAuth.instance.currentUser!.uid;
+
+      final userData =
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .get();
+
+      if (userData.exists) {
+
+        setState(() {
+
+          userName =
+          userData["fullName"];
+
+          isLoading = false;
+        });
+      }
+
+    } catch (e) {
+
+      setState(() {
+
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -25,704 +73,714 @@ class _HomePageState extends State<HomePage> {
     final height =
         MediaQuery.of(context).size.height;
 
-    return Scaffold(
-
-      backgroundColor: Colors.black,
-
-      body: SafeArea(
-
-        child: SingleChildScrollView(
-
-          physics:
-          const BouncingScrollPhysics(),
-
-          padding: EdgeInsets.symmetric(
-
-            horizontal: width * 0.05,
-            vertical: height * 0.02,
+    return SafeArea(
+      child: Scaffold(
+      
+        backgroundColor:
+        const Color(0xFF020617),
+      
+        /// =========================
+        /// FLOATING NAVIGATION BAR
+        /// =========================
+        bottomNavigationBar: Padding(
+      
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: 20,
           ),
-
-          child: Column(
-
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
-
-            children: [
-
-              /// =========================
-              /// TOP BAR
-              /// =========================
-              Row(
-
+      
+          child: Container(
+      
+            height: height * 0.09,
+      
+            decoration: BoxDecoration(
+      
+              color:
+              Colors.white.withOpacity(0.06),
+      
+              borderRadius:
+              BorderRadius.circular(40),
+      
+              border: Border.all(
+      
+                color:
+                Colors.white.withOpacity(0.08),
+              ),
+      
+              boxShadow: [
+      
+                BoxShadow(
+      
+                  color:
+                  Colors.black.withOpacity(0.25),
+      
+                  blurRadius: 25,
+      
+                  offset:
+                  const Offset(0, 10),
+                ),
+              ],
+            ),
+      
+            child: Row(
+      
+              mainAxisAlignment:
+              MainAxisAlignment.spaceAround,
+      
+              children: [
+      
+                navItem(
+                  0,
+                  Icons.home_rounded,
+                ),
+      
+                navItem(
+                  1,
+                  Icons.calendar_month_rounded,
+                ),
+      
+                navItem(
+                  2,
+                  Icons.chat_bubble_outline_rounded,
+                ),
+      
+                navItem(
+                  3,
+                  Icons.people_alt_rounded,
+                ),
+              ],
+            ),
+          ),
+        ),
+      
+        body: SafeArea(
+      
+          child: SingleChildScrollView(
+      
+            physics:
+            const BouncingScrollPhysics(),
+      
+            child: Padding(
+      
+              padding: EdgeInsets.symmetric(
+      
+                horizontal:
+                width * 0.05,
+      
+                vertical:
+                height * 0.02,
+              ),
+      
+              child: Column(
                 mainAxisAlignment:
                 MainAxisAlignment.spaceBetween,
-
+                mainAxisSize:
+                MainAxisSize.min,
+      
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+      
                 children: [
-
-                  /// MENU
-                  glassCircleButton(
-
-                    icon:
-                    Icons.menu_rounded,
-
-                    size:
-                    width * 0.14,
-                  ),
-
+      
+                  /// =========================
+                  /// TOP BAR
+                  /// =========================
                   Row(
+      
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+      
                     children: [
-
+      
                       glassCircleButton(
-
+      
                         icon:
-                        Icons.notifications_none_rounded,
-
+                        Icons.menu_rounded,
+      
                         size:
                         width * 0.14,
                       ),
+      
+                      Row(
+                        children: [
+      
+                          glassCircleButton(
+      
+                            icon:
+                            Icons.notifications_none_rounded,
+      
+                            size:
+                            width * 0.14,
+                          ),
+      
+                          SizedBox(
+                            width:
+                            width * 0.03,
+                          ),
+      
+                          /// PROFILE
+                          Container(
+      
+                            padding:
+                            const EdgeInsets.all(2),
+      
+                            decoration: BoxDecoration(
+      
+                              shape:
+                              BoxShape.circle,
+      
+                              border: Border.all(
+      
+                                color:
+                                const Color(0xFFD9FF00),
+      
+                                width: 2,
+                              ),
+                            ),
+      
+                            child: CircleAvatar(
+      
+                              radius:
+                              width * 0.06,
+      
+                              backgroundColor:
+                              Colors.grey.shade800,
+      
+                              child: Icon(
+      
+                                Icons.person,
+      
+                                color: Colors.white,
+      
+                                size:
+                                width * 0.07,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+      
+                  SizedBox(
+                    height:
+                    height * 0.04,
+                  ),
+      
+                  /// =========================
+                  /// HELLO TEXT
+                  /// =========================
+                  RichText(
+      
+                    text: TextSpan(
+      
+                      children: [
+      
+                        TextSpan(
+      
+                          text: "Hello, ",
+      
+                          style: TextStyle(
+      
+                            color: Colors.white,
+      
+                            fontSize:
+                            width * 0.10,
+      
+                            fontWeight:
+                            FontWeight.bold,
+                          ),
+                        ),
+      
+                        TextSpan(
+      
+                          text:
+                          userName,
+      
+                          style: TextStyle(
+      
+                            color:
+                            const Color(0xFFD9FF00),
+      
+                            fontSize:
+                            width * 0.10,
+      
+                            fontWeight:
+                            FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+      
+                  SizedBox(
+                    height:
+                    height * 0.01,
+                  ),
+      
+                  Text(
+      
+                    "Welcome back to Acote workspace",
+      
+                    style: TextStyle(
+      
+                      color:
+                      Colors.white.withOpacity(0.6),
+      
+                      fontSize:
+                      width * 0.040,
+                    ),
+                  ),
+      
+                  SizedBox(
+                    height:
+                    height * 0.035,
+                  ),
+      
+                  /// =========================
+                  /// CATEGORY
+                  /// =========================
+                  SingleChildScrollView(
+      
+                    scrollDirection:
+                    Axis.horizontal,
+      
+                    child: Row(
+                      children: [
+      
+                        glassCategory(
+                          icon: Icons.search,
+                          width: width,
+                        ),
+      
+                        SizedBox(
+                          width:
+                          width * 0.03,
+                        ),
+      
+                        categoryChip(
+                          "HRD Meeting",
+                          width,
+                        ),
+      
+                        SizedBox(
+                          width:
+                          width * 0.03,
+                        ),
+      
+                        categoryChip(
+                          "Developer Team",
+                          width,
+                        ),
+      
+                        SizedBox(
+                          width:
+                          width * 0.03,
+                        ),
+      
+                        categoryChip(
+                          "Acote Workspace",
+                          width,
+                        ),
+                      ],
+                    ),
+                  ),
+      
+                  SizedBox(
+                    height:
+                    height * 0.04,
+                  ),
+      
+                  /// =========================
+                  /// TITLE
+                  /// =========================
+                  Text(
+      
+                    "My Task",
+      
+                    style: TextStyle(
+      
+                      color: Colors.white,
+      
+                      fontSize:
+                      width * 0.075,
+      
+                      fontWeight:
+                      FontWeight.bold,
+                    ),
+                  ),
+      
+                  SizedBox(
+                    height:
+                    height * 0.025,
+                  ),
+      
+                  /// =========================
+                  /// MAIN TASK CARD
+                  /// =========================
+                  SizedBox(
+      
+                    height:
+                    height * 0.60,
+      
+                    child: Container(
 
-                      SizedBox(
-                        width: width * 0.03,
+                      height: height * 0.42,
+
+                      width: double.infinity,
+
+                      decoration: BoxDecoration(
+
+                        borderRadius:
+                        BorderRadius.circular(32),
+
+                        image: const DecorationImage(
+
+                          image: AssetImage(
+                            "assets/images/meeting.png"
+                          ),
+
+                          fit: BoxFit.cover,
+
+                        ),
                       ),
 
-                      /// PROFILE
-                      Container(
+                      child: Container(
 
-                        padding:
-                        const EdgeInsets.all(2),
+                        padding: EdgeInsets.all(
+                          width * 0.06,
+                        ),
 
                         decoration: BoxDecoration(
 
-                          shape:
-                          BoxShape.circle,
+                          borderRadius:
+                          BorderRadius.circular(32),
 
-                          border: Border.all(
+                          gradient: LinearGradient(
 
-                            color:
-                            const Color(0xFFD9FF00),
+                            begin: Alignment.topCenter,
 
-                            width: 2,
+                            end: Alignment.bottomCenter,
+
+                            colors: [
+
+                              Colors.black.withOpacity(0.15),
+
+                              Colors.black.withOpacity(0.80),
+                            ],
                           ),
                         ),
 
-                        child: CircleAvatar(
+                        child: Column(
 
-                          radius:
-                          width * 0.06,
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
 
-                          backgroundColor:
-                          Colors.grey.shade800,
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
 
-                          child: Icon(
+                          children: [
 
-                            Icons.person,
+                            /// TOP
+                            Row(
 
-                            color: Colors.white,
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
 
-                            size:
-                            width * 0.07,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                              children: [
 
-              SizedBox(
-                height: height * 0.04,
-              ),
+                                Row(
+                                  children: [
 
-              /// =========================
-              /// HELLO TEXT
-              /// =========================
-              RichText(
+                                    Container(
 
-                text: TextSpan(
+                                      height: width * 0.12,
 
-                  children: [
+                                      width: width * 0.12,
 
-                    TextSpan(
+                                      decoration: BoxDecoration(
 
-                      text: "Hello, ",
+                                        shape: BoxShape.circle,
 
-                      style: TextStyle(
+                                        color:
+                                        Colors.white.withOpacity(0.12),
+                                      ),
 
-                        color: Colors.white,
+                                      child: Icon(
 
-                        fontSize:
-                        width * 0.10,
+                                        Icons.calendar_today_rounded,
 
-                        fontWeight:
-                        FontWeight.bold,
-                      ),
-                    ),
+                                        color: Colors.white,
 
-                    TextSpan(
+                                        size: width * 0.05,
+                                      ),
+                                    ),
 
-                      text: "Sazid",
+                                    SizedBox(
+                                      width: width * 0.03,
+                                    ),
 
-                      style: TextStyle(
+                                    Column(
 
-                        color:
-                        const Color(0xFFD9FF00),
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
 
-                        fontSize:
-                        width * 0.10,
+                                      children: [
 
-                        fontWeight:
-                        FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                                        Text(
 
-              SizedBox(
-                height: height * 0.01,
-              ),
+                                          "May 22, 2025",
 
-              Text(
+                                          style: TextStyle(
 
-                "Welcome back to Acote workspace",
+                                            color:
+                                            Colors.white70,
 
-                style: TextStyle(
+                                            fontSize:
+                                            width * 0.03,
+                                          ),
+                                        ),
 
-                  color:
-                  Colors.white.withOpacity(0.6),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
 
-                  fontSize:
-                  width * 0.040,
-                ),
-              ),
+                                        Text(
 
-              SizedBox(
-                height: height * 0.035,
-              ),
+                                          "10:00 - 11:00 AM",
 
-              /// =========================
-              /// CATEGORY
-              /// =========================
-              SingleChildScrollView(
+                                          style: TextStyle(
 
-                scrollDirection:
-                Axis.horizontal,
+                                            color: Colors.white,
 
-                child: Row(
-                  children: [
+                                            fontWeight:
+                                            FontWeight.bold,
 
-                    glassCategory(
-                      icon: Icons.search,
-                      width: width,
-                    ),
+                                            fontSize:
+                                            width * 0.04,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
 
-                    SizedBox(
-                      width: width * 0.03,
-                    ),
+                                Container(
 
-                    categoryChip(
-                      "HRD Meeting",
-                      width,
-                    ),
+                                  height: width * 0.12,
 
-                    SizedBox(
-                      width: width * 0.03,
-                    ),
+                                  width: width * 0.12,
 
-                    categoryChip(
-                      "Developer Team",
-                      width,
-                    ),
+                                  decoration: BoxDecoration(
 
-                    SizedBox(
-                      width: width * 0.03,
-                    ),
+                                    shape: BoxShape.circle,
 
-                    categoryChip(
-                      "Acote Workspace",
-                      width,
-                    ),
-                  ],
-                ),
-              ),
+                                    border: Border.all(
 
-              SizedBox(
-                height: height * 0.04,
-              ),
+                                      color:
+                                      Colors.white24,
+                                    ),
+                                  ),
 
-              /// =========================
-              /// TITLE
-              /// =========================
-              Text(
+                                  child: Icon(
 
-                "My Task",
+                                    Icons.arrow_outward_rounded,
 
-                style: TextStyle(
+                                    color: Colors.white,
 
-                  color: Colors.white,
-
-                  fontSize:
-                  width * 0.075,
-
-                  fontWeight:
-                  FontWeight.bold,
-                ),
-              ),
-
-              SizedBox(
-                height: height * 0.025,
-              ),
-
-              /// =========================
-              /// MAIN CARD
-              /// =========================
-              Container(
-
-                height: height * 0.58,
-
-                width: double.infinity,
-
-                decoration: BoxDecoration(
-
-                  borderRadius:
-                  BorderRadius.circular(38),
-
-                  gradient:
-                  LinearGradient(
-
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-
-                    colors: [
-
-                      Colors.white.withOpacity(0.12),
-
-                      Colors.white.withOpacity(0.03),
-                    ],
-                  ),
-
-                  border: Border.all(
-
-                    color:
-                    Colors.white.withOpacity(0.08),
-                  ),
-                ),
-
-                child: ClipRRect(
-
-                  borderRadius:
-                  BorderRadius.circular(38),
-
-                  child: BackdropFilter(
-
-                    filter: ImageFilter.blur(
-                      sigmaX: 25,
-                      sigmaY: 25,
-                    ),
-
-                    child: Stack(
-                      children: [
-
-                        /// GLOW
-                        Positioned(
-
-                          top: -60,
-                          right: -30,
-
-                          child: Container(
-
-                            height:
-                            width * 0.45,
-
-                            width:
-                            width * 0.45,
-
-                            decoration: BoxDecoration(
-
-                              shape:
-                              BoxShape.circle,
-
-                              color:
-                              Colors.white.withOpacity(0.06),
+                                    size: width * 0.055,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ),
 
-                        Padding(
+                            /// TITLE
+                            Text(
 
-                          padding: EdgeInsets.all(
-                            width * 0.06,
-                          ),
+                              "Development\nSprint Team\nMeeting",
 
-                          child: Column(
+                              style: TextStyle(
 
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                                color: Colors.white,
 
-                            children: [
+                                fontWeight:
+                                FontWeight.bold,
 
-                              /// TOP ROW
-                              Row(
+                                height: 1,
+
+                                fontSize:
+                                width * 0.085,
+                              ),
+                            ),
+
+                            /// MEMBERS
+                            Column(
+
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+
+                              children: [
+
+                                Text(
+
+                                  "Joined Members",
+
+                                  style: TextStyle(
+
+                                    color:
+                                    Colors.white70,
+
+                                    fontSize:
+                                    width * 0.035,
+                                  ),
+                                ),
+
+                                SizedBox(
+                                  height: height * 0.015,
+                                ),
+
+                                Row(
+                                  children: [
+
+                                    memberImage(
+                                      "assets/images/p1.jpg",
+                                    ),
+
+                                    memberImage(
+                                      "assets/images/p2.jpg",
+                                    ),
+
+                                    memberImage(
+                                      "assets/images/p3.jpg",
+                                    ),
+
+                                    Transform.translate(
+
+                                      offset: const Offset(-15, 0),
+
+                                      child: Container(
+
+                                        height: width * 0.10,
+
+                                        width: width * 0.10,
+
+                                        decoration: BoxDecoration(
+
+                                          shape:
+                                          BoxShape.circle,
+
+                                          color:
+                                          Colors.grey.shade700,
+
+                                          border: Border.all(
+
+                                            color: Colors.black,
+                                            width: 2,
+                                          ),
+                                        ),
+
+                                        child: Center(
+
+                                          child: Text(
+
+                                            "+10",
+
+                                            style: TextStyle(
+
+                                              color: Colors.white,
+
+                                              fontWeight:
+                                              FontWeight.bold,
+
+                                              fontSize:
+                                              width * 0.03,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+
+                            /// BOTTOM
+                            Container(
+
+                              padding: EdgeInsets.symmetric(
+
+                                horizontal:
+                                width * 0.05,
+
+                                vertical:
+                                height * 0.018,
+                              ),
+
+                              decoration: BoxDecoration(
+
+                                borderRadius:
+                                BorderRadius.circular(20),
+
+                                color:
+                                Colors.black.withOpacity(0.35),
+                              ),
+
+                              child: Row(
 
                                 mainAxisAlignment:
                                 MainAxisAlignment.spaceBetween,
 
                                 children: [
 
-                                  Row(
-                                    children: [
+                                  Text(
 
-                                      glassCircleButton(
+                                    "Work in Progress",
 
-                                        icon:
-                                        Icons.calendar_today_rounded,
-
-                                        size:
-                                        width * 0.13,
-                                      ),
-
-                                      SizedBox(
-                                        width:
-                                        width * 0.03,
-                                      ),
-
-                                      Column(
-
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-
-                                        children: [
-
-                                          Text(
-
-                                            "May 22, 2025",
-
-                                            style: TextStyle(
-
-                                              color:
-                                              Colors.white.withOpacity(0.6),
-
-                                              fontSize:
-                                              width * 0.032,
-                                            ),
-                                          ),
-
-                                          SizedBox(
-                                            height:
-                                            height * 0.005,
-                                          ),
-
-                                          Text(
-
-                                            "10:00 - 11:00 AM",
-
-                                            style: TextStyle(
-
-                                              color:
-                                              Colors.white,
-
-                                              fontWeight:
-                                              FontWeight.bold,
-
-                                              fontSize:
-                                              width * 0.040,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-
-                                  Container(
-
-                                    height:
-                                    width * 0.13,
-
-                                    width:
-                                    width * 0.13,
-
-                                    decoration: BoxDecoration(
-
-                                      shape:
-                                      BoxShape.circle,
-
-                                      border: Border.all(
-
-                                        color:
-                                        Colors.white.withOpacity(0.15),
-                                      ),
-                                    ),
-
-                                    child: Icon(
-
-                                      Icons.arrow_outward_rounded,
+                                    style: TextStyle(
 
                                       color: Colors.white,
 
-                                      size:
+                                      fontWeight:
+                                      FontWeight.w500,
+
+                                      fontSize:
+                                      width * 0.04,
+                                    ),
+                                  ),
+
+                                  Text(
+
+                                    "80%",
+
+                                    style: TextStyle(
+
+                                      color:
+                                      const Color(0xFFD9FF00),
+
+                                      fontWeight:
+                                      FontWeight.bold,
+
+                                      fontSize:
                                       width * 0.06,
                                     ),
                                   ),
                                 ],
                               ),
-
-                              SizedBox(
-                                height: height * 0.04,
-                              ),
-
-                              /// TITLE
-                              Text(
-
-                                "Development\nSprint Team\nMeeting",
-
-                                style: TextStyle(
-
-                                  color: Colors.white,
-
-                                  height: 1.1,
-
-                                  fontSize:
-                                  width * 0.10,
-
-                                  fontWeight:
-                                  FontWeight.bold,
-                                ),
-                              ),
-
-                              const Spacer(),
-
-                              /// MEMBERS
-                              Text(
-
-                                "Joined Members",
-
-                                style: TextStyle(
-
-                                  color:
-                                  Colors.white.withOpacity(0.7),
-
-                                  fontSize:
-                                  width * 0.040,
-                                ),
-                              ),
-
-                              SizedBox(
-                                height: height * 0.018,
-                              ),
-
-                              Row(
-                                children: [
-
-                                  memberAvatar(
-                                    "A",
-                                    width,
-                                  ),
-
-                                  memberAvatar(
-                                    "S",
-                                    width,
-                                  ),
-
-                                  memberAvatar(
-                                    "R",
-                                    width,
-                                  ),
-
-                                  Container(
-
-
-                                    transform:
-                                    Matrix4.translationValues(
-                                    -width * 0.03,
-                                    0,
-                                    0,
-                                  ),
-
-                                    height:
-                                    width * 0.11,
-
-                                    width:
-                                    width * 0.11,
-
-                                    decoration: BoxDecoration(
-
-                                      shape:
-                                      BoxShape.circle,
-
-                                      color:
-                                      Colors.grey.shade700,
-
-                                      border: Border.all(
-
-                                        color:
-                                        Colors.black,
-
-                                        width: 2,
-                                      ),
-                                    ),
-
-                                    child: Center(
-
-                                      child: Text(
-
-                                        "+10",
-
-                                        style: TextStyle(
-
-                                          color:
-                                          Colors.white,
-
-                                          fontWeight:
-                                          FontWeight.bold,
-
-                                          fontSize:
-                                          width * 0.030,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              SizedBox(
-                                height: height * 0.03,
-                              ),
-
-                              /// BOTTOM BAR
-                              Container(
-
-                                padding:
-                                EdgeInsets.symmetric(
-
-                                  horizontal:
-                                  width * 0.05,
-
-                                  vertical:
-                                  height * 0.022,
-                                ),
-
-                                decoration: BoxDecoration(
-
-                                  borderRadius:
-                                  BorderRadius.circular(24),
-
-                                  color:
-                                  Colors.white.withOpacity(0.06),
-                                ),
-
-                                child: Row(
-
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-
-                                  children: [
-
-                                    Text(
-
-                                      "Work in Progress",
-
-                                      style: TextStyle(
-
-                                        color:
-                                        Colors.white,
-
-                                        fontSize:
-                                        width * 0.045,
-
-                                        fontWeight:
-                                        FontWeight.w600,
-                                      ),
-                                    ),
-
-                                    Text(
-
-                                      "80%",
-
-                                      style: TextStyle(
-
-                                        color:
-                                        const Color(0xFFD9FF00),
-
-                                        fontSize:
-                                        width * 0.07,
-
-                                        fontWeight:
-                                        FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+      
+                  SizedBox(
+                    height:
+                    height * 0.03,
+                  ),
+                ],
               ),
-
-              SizedBox(
-                height: height * 0.035,
-              ),
-
-              /// =========================
-              /// BOTTOM NAV
-              /// =========================
-              Container(
-
-                padding: EdgeInsets.symmetric(
-
-                  horizontal:
-                  width * 0.03,
-
-                  vertical:
-                  height * 0.015,
-                ),
-
-                decoration: BoxDecoration(
-
-                  borderRadius:
-                  BorderRadius.circular(35),
-
-                  color:
-                  Colors.white.withOpacity(0.05),
-                ),
-
-                child: Row(
-
-                  mainAxisAlignment:
-                  MainAxisAlignment.spaceAround,
-
-                  children: [
-
-                    bottomItem(
-                      0,
-                      Icons.home_outlined,
-                      width,
-                    ),
-
-                    bottomItem(
-                      1,
-                      Icons.calendar_month_rounded,
-                      width,
-                    ),
-
-                    bottomItem(
-                      2,
-                      Icons.chat_bubble_outline_rounded,
-                      width,
-                    ),
-
-                    bottomItem(
-                      3,
-                      Icons.groups_rounded,
-                      width,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -739,7 +797,8 @@ class _HomePageState extends State<HomePage> {
 
     return Container(
 
-      padding: EdgeInsets.symmetric(
+      padding:
+      EdgeInsets.symmetric(
 
         horizontal:
         width * 0.055,
@@ -771,7 +830,8 @@ class _HomePageState extends State<HomePage> {
 
           color: Colors.white,
 
-          fontWeight: FontWeight.w600,
+          fontWeight:
+          FontWeight.w600,
 
           fontSize:
           width * 0.035,
@@ -792,12 +852,16 @@ class _HomePageState extends State<HomePage> {
 
     return Container(
 
-      height: width * 0.14,
-      width: width * 0.14,
+      height:
+      width * 0.14,
+
+      width:
+      width * 0.14,
 
       decoration: BoxDecoration(
 
-        shape: BoxShape.circle,
+        shape:
+        BoxShape.circle,
 
         color:
         Colors.white.withOpacity(0.06),
@@ -807,9 +871,11 @@ class _HomePageState extends State<HomePage> {
 
         icon,
 
-        color: Colors.white,
+        color:
+        Colors.white,
 
-        size: width * 0.06,
+        size:
+        width * 0.06,
       ),
     );
   }
@@ -831,7 +897,8 @@ class _HomePageState extends State<HomePage> {
 
       decoration: BoxDecoration(
 
-        shape: BoxShape.circle,
+        shape:
+        BoxShape.circle,
 
         color:
         Colors.white.withOpacity(0.06),
@@ -841,15 +908,17 @@ class _HomePageState extends State<HomePage> {
 
         icon,
 
-        color: Colors.white,
+        color:
+        Colors.white,
 
-        size: size * 0.42,
+        size:
+        size * 0.42,
       ),
     );
   }
 
   /// =========================
-  /// MEMBER
+  /// MEMBER AVATAR
   /// =========================
   Widget memberAvatar(
       String text,
@@ -881,7 +950,9 @@ class _HomePageState extends State<HomePage> {
 
           border: Border.all(
 
-            color: Colors.black,
+            color:
+            Colors.black,
+
             width: 2,
           ),
         ),
@@ -894,7 +965,8 @@ class _HomePageState extends State<HomePage> {
 
             style: TextStyle(
 
-              color: Colors.black,
+              color:
+              Colors.black,
 
               fontWeight:
               FontWeight.bold,
@@ -909,12 +981,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// =========================
-  /// BOTTOM ITEM
+  /// NAV ITEM
   /// =========================
-  Widget bottomItem(
+  Widget navItem(
       int index,
       IconData icon,
-      double width,
       ) {
 
     final isSelected =
@@ -930,13 +1001,18 @@ class _HomePageState extends State<HomePage> {
         });
       },
 
-      child: Container(
+      child: AnimatedContainer(
+
+        duration:
+        const Duration(
+          milliseconds: 250,
+        ),
 
         height:
-        width * 0.14,
+        isSelected ? 55 : 48,
 
         width:
-        width * 0.14,
+        isSelected ? 55 : 48,
 
         decoration: BoxDecoration(
 
@@ -947,7 +1023,7 @@ class _HomePageState extends State<HomePage> {
 
               ? const Color(0xFFD9FF00)
 
-              : Colors.white.withOpacity(0.05),
+              : Colors.transparent,
         ),
 
         child: Icon(
@@ -960,9 +1036,27 @@ class _HomePageState extends State<HomePage> {
 
               : Colors.white,
 
-          size:
-          width * 0.06,
+          size: 26,
         ),
+      ),
+    );
+  }
+  Widget memberImage(
+      String image,
+      ) {
+
+    return Transform.translate(
+
+      offset: const Offset(-10, 0),
+
+      child: CircleAvatar(
+
+        radius: 20,
+
+        backgroundColor: Colors.black,
+
+        backgroundImage:
+        AssetImage(image),
       ),
     );
   }

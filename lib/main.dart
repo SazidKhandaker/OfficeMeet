@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:flutter/material.dart';
 import 'package:office_meet/DB/DefaultFirebaseOptions.dart' show DefaultFirebaseOptions;
+import 'package:office_meet/homepage.dart' show HomePage;
 import 'package:office_meet/splashscreen/splashscreen.dart' show Splashscreen, SplashScreen;
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +30,9 @@ class MyApp extends StatelessWidget {
 
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home:  SplashScreen(),
+      home:  FirebaseAuth.instance.currentUser != null
+          ? const HomePage()
+          : const SplashScreen(),
     );
   }
 }
