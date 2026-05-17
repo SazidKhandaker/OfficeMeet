@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:flutter/material.dart';
 import 'package:office_meet/Auth/Singin.dart' show SignUpPage;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -355,6 +356,15 @@ class _LoginPageState extends State<LoginPage> {
                                       /// EMAIL VERIFIED
                                       if (user != null &&
                                           user.emailVerified) {
+
+                                        await FirebaseFirestore
+                                            .instance
+                                            .collection("users")
+                                            .doc(user.uid)
+                                            .update({
+
+                                          "verified": true,
+                                        });
 
                                         showCustomSnackBar(
 

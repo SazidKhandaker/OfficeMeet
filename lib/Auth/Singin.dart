@@ -562,11 +562,18 @@ class _SignUpPageState extends State<SignUpPage> {
                                       "email":
                                       emailController.text.trim(),
 
+                                      "designation": "",
+
+                                      "department": "",
+
+                                      "joiningDate": "",
+
+                                      "profileImage": "",
+
+                                      "verified": false,
+
                                       "createdAt":
                                       DateTime.now(),
-
-                                      "verified":
-                                      false,
                                     });
 
                                     showCustomSnackBar(

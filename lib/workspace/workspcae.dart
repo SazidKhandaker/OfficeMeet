@@ -309,11 +309,15 @@ class WorkspacePage extends StatelessWidget {
 
                               stream:
                               FirebaseFirestore
-                                  .instance
-                                  .collection(
-                                "users",
-                              )
-                                  .snapshots(),
+                              .instance
+                              .collection(
+                              "users",
+                            )
+                                .where(
+                              "verified",
+                              isEqualTo: true,
+                            )
+                                .snapshots(),
 
                               builder:
                                   (context, snapshot) {

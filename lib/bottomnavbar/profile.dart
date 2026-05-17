@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:office_meet/Auth/login.dart' show LoginPage;
 
 import 'package:office_meet/profile/editprofile.dart';
 import 'package:office_meet/workspace/workspcae.dart' show WorkspacePage;
@@ -637,13 +638,44 @@ class _ProfilePageState
                           color:
                           Colors.redAccent,
 
-                          onTap: () async {
+              onTap: () async {
 
-                            await FirebaseAuth
-                                .instance
-                                .signOut();
-                          },
-                        ),
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
+
+              SnackBar(
+
+              backgroundColor:
+              Colors.green,
+
+              content: const Text(
+
+              "Logout successful",
+              ),
+              ),
+              );
+
+              await Future.delayed(
+              const Duration(seconds: 1),
+              );
+
+              await FirebaseAuth
+                  .instance
+                  .signOut();
+
+              Navigator.pushAndRemoveUntil(
+
+              context,
+
+              MaterialPageRoute(
+
+              builder: (context) =>
+              const LoginPage(),
+              ),
+
+              (route) => false,
+              );
+              },),
 
                         SizedBox(
                           height:
