@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:office_meet/workspace/department_details_page.dart' show DepartmentDetailsPage;
 
 class WorkspacePage extends StatelessWidget {
 
@@ -506,7 +507,20 @@ class WorkspacePage extends StatelessWidget {
 
           onTap: () {
 
-            /// NEXT PAGE
+            Navigator.push(
+
+              context,
+
+              MaterialPageRoute(
+
+                builder: (context) =>
+
+                    DepartmentDetailsPage(
+
+                      department: department ,
+                    ),
+              ),
+            );
           },
 
           child: ClipRRect(
