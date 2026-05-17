@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:office_meet/profile/editprofile.dart';
+import 'package:office_meet/workspace/workspcae.dart' show WorkspacePage;
 
 class ProfilePage extends StatefulWidget {
 
@@ -489,7 +490,7 @@ class _ProfilePageState
 
                                 "Acote",
 
-                                "No1 Project",
+                                "No1",
 
                                 width,
                               ),
@@ -578,7 +579,19 @@ class _ProfilePageState
                             0xFFB026FF,
                           ),
 
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+
+                              context,
+
+                              MaterialPageRoute(
+
+                                builder: (context) =>
+                                const WorkspacePage(),
+                              ),
+                            );
+
+                          },
                         ),
 
                         SizedBox(
