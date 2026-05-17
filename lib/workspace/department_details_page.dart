@@ -26,7 +26,8 @@ class DepartmentDetailsPage
         MediaQuery.of(context).size.height;
 
     final descriptions = {
-
+      "Nurion Lab":
+      "Research and BPO department.",
       "IT":
       "Handles all software, server and technical operations.",
 
@@ -45,8 +46,7 @@ class DepartmentDetailsPage
       "Business Development":
       "Creates new business opportunities and partnerships.",
 
-      "Nurion Lab":
-      "Research and BPO department.",
+
 
       "Nurion Studio":
       "Creative production and Part of ui/ux team.",

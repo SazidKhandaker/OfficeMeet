@@ -20,7 +20,14 @@ class WorkspacePage extends StatelessWidget {
         MediaQuery.of(context).size.height;
 
     final departments = [
-
+      {
+        "name": "CEO",
+        "icon": Icons.workspace_premium,
+      },
+      {
+        "name": "Nurion Lab",
+        "icon": Icons.science,
+      },
       {
         "name": "IT",
         "icon": Icons.computer,
@@ -51,20 +58,13 @@ class WorkspacePage extends StatelessWidget {
         "icon": Icons.business_center,
       },
 
-      {
-        "name": "Nurion Lab",
-        "icon": Icons.science,
-      },
+
 
       {
         "name": "Nurion Studio",
         "icon": Icons.video_collection,
       },
 
-      {
-        "name": "CEO",
-        "icon": Icons.workspace_premium,
-      },
 
       {
         "name": "Other Department",

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:office_meet/Auth/login.dart' show LoginPage;
-
+import 'package:office_meet/homepage.dart' show HomePage;
 import 'package:office_meet/profile/editprofile.dart';
 import 'package:office_meet/workspace/workspcae.dart' show WorkspacePage;
 
@@ -194,9 +194,16 @@ class _ProfilePageState
 
                                   () {
 
-                                Navigator.pop(
-                                  context,
-                                );
+                                    Navigator.pushReplacement(
+
+                                      context,
+
+                                      MaterialPageRoute(
+
+                                        builder: (context) =>
+                                        const HomePage(),
+                                      ),
+                                    );
                               },
                             ),
 
