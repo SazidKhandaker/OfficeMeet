@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:office_meet/profile/editprofile.dart' show EditProfilePage;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -397,7 +398,20 @@ class _ProfilePageState
                         0xFF00E5FF,
                       ),
 
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (context) =>
+                            const EditProfilePage(),
+                          ),
+                        );
+
+
+                      },
                     ),
 
                     SizedBox(
