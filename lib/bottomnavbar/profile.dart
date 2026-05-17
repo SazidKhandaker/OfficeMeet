@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:office_meet/Auth/login.dart' show LoginPage;
 import 'package:office_meet/Security%20and%20privacy/privacysecuritypage.dart' show PrivacySecurityPage;
+import 'package:office_meet/Security%20and%20privacy/settingpage.dart' show SettingsPage;
 import 'package:office_meet/homepage.dart' show HomePage;
 import 'package:office_meet/profile/editprofile.dart';
 import 'package:office_meet/workspace/workspcae.dart' show WorkspacePage;
@@ -230,7 +231,20 @@ class _ProfilePageState
                               Icons
                                   .settings_outlined,
 
-                                  () {},
+                                  () {
+                                    Navigator.push(
+
+                                      context,
+
+                                      MaterialPageRoute(
+
+                                        builder: (context) =>
+
+                                        const SettingsPage(),
+                                      ),
+                                    );
+
+                                  },
                             ),
                           ],
                         ),
@@ -511,14 +525,43 @@ class _ProfilePageState
                             ),
 
                             Expanded(
+
                               child:
-                              statCard(
+                              StreamBuilder<QuerySnapshot>(
 
-                                "46",
+                                stream:
+                                FirebaseFirestore
+                                    .instance
+                                    .collection("users")
+                                    .where(
+                                  "verified",
+                                  isEqualTo: true,
+                                )
+                                    .snapshots(),
 
-                                "Teams",
+                                builder:
+                                    (context, snapshot) {
 
-                                width,
+                                  int totalEmployees = 0;
+
+                                  if (snapshot.hasData) {
+
+                                    totalEmployees =
+                                        snapshot
+                                            .data!
+                                            .docs
+                                            .length;
+                                  }
+
+                                  return statCard(
+
+                                    "$totalEmployees",
+
+                                    "Employees",
+
+                                    width,
+                                  );
+                                },
                               ),
                             ),
                           ],
