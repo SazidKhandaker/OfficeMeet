@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
 
 class MeetingBookingPage extends StatefulWidget {
 
@@ -877,7 +878,275 @@ class _MeetingBookingPageState
 
                     SizedBox(
                       height:
-                      height * 0.05,
+                      height * 0.07,
+                    ),
+
+
+                    /// =========================
+                    /// VIDEO CONFERENCE
+                    /// =========================
+                    GestureDetector(
+
+                      onTap: () {
+
+                        showDialog(
+
+                          context: context,
+
+                          builder: (context) {
+
+                            return AlertDialog(
+
+                              backgroundColor:
+                              const Color(
+                                0xFF151127,
+                              ),
+
+                              shape: RoundedRectangleBorder(
+
+                                borderRadius:
+                                BorderRadius.circular(
+                                  24,
+                                ),
+                              ),
+
+                              title: const Text(
+
+                                "Video Conference",
+
+                                style: TextStyle(
+                                  color:
+                                  Colors.white,
+                                ),
+                              ),
+
+                              content: const Text(
+
+                                "This page is currently under development. Are you interested in visiting the meeting page?",
+
+                                style: TextStyle(
+                                  color:
+                                  Colors.white70,
+                                ),
+                              ),
+
+                              actions: [
+
+                                TextButton(
+
+                                  onPressed: () {
+
+                                    Navigator.pop(
+                                      context,
+                                    );
+                                  },
+
+                                  child: const Text(
+
+                                    "Cancel",
+                                  ),
+                                ),
+
+                                TextButton(
+
+                                  onPressed: () {
+
+                                    Navigator.pop(
+                                      context,
+                                    );
+
+                                    Navigator.push(
+
+                                      context,
+
+                                      MaterialPageRoute(
+
+                                        builder: (context) =>
+
+                                        const MeetingPage(),
+                                      ),
+                                    );
+                                  },
+
+                                  child: const Text(
+
+                                    "Continue",
+
+                                    style: TextStyle(
+                                      color:
+                                      Colors.greenAccent,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+
+                      child: ClipRRect(
+
+                        borderRadius:
+                        BorderRadius.circular(
+                          30,
+                        ),
+
+                        child: BackdropFilter(
+
+                          filter: ImageFilter.blur(
+
+                            sigmaX: 20,
+                            sigmaY: 20,
+                          ),
+
+                          child: Container(
+
+                            width:
+                            double.infinity,
+
+                            padding:
+                            const EdgeInsets.all(
+                              22,
+                            ),
+
+                            decoration:
+                            BoxDecoration(
+
+                              borderRadius:
+                              BorderRadius.circular(
+                                30,
+                              ),
+
+                              gradient:
+                              LinearGradient(
+
+                                colors: [
+
+                                  const Color(
+                                    0xFF00E5FF,
+                                  ).withOpacity(
+                                    0.22,
+                                  ),
+
+                                  const Color(
+                                    0xFFB026FF,
+                                  ).withOpacity(
+                                    0.22,
+                                  ),
+                                ],
+                              ),
+
+                              border: Border.all(
+
+                                color:
+                                Colors.white
+                                    .withOpacity(
+                                  0.08,
+                                ),
+                              ),
+                            ),
+
+                            child: Row(
+
+                              children: [
+
+                                Container(
+
+                                  padding:
+                                  const EdgeInsets.all(
+                                    16,
+                                  ),
+
+                                  decoration:
+                                  BoxDecoration(
+
+                                    shape:
+                                    BoxShape.circle,
+
+                                    color:
+                                    Colors.white
+                                        .withOpacity(
+                                      0.08,
+                                    ),
+                                  ),
+
+                                  child: const Icon(
+
+                                    Icons.video_call,
+
+                                    color:
+                                    Colors.white,
+
+                                    size: 30,
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                  width: 18,
+                                ),
+
+                                Expanded(
+
+                                  child: Column(
+
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment
+                                        .start,
+
+                                    children: [
+
+                                      Text(
+
+                                        "Video Conference",
+
+                                        style: TextStyle(
+
+                                          color:
+                                          Colors.white,
+
+                                          fontWeight:
+                                          FontWeight.bold,
+
+                                          fontSize:
+                                          width * 0.045,
+                                        ),
+                                      ),
+
+                                      const SizedBox(
+                                        height: 6,
+                                      ),
+
+                                      Text(
+
+                                        "Create & join online workspace meetings.",
+
+                                        style: TextStyle(
+
+                                          color:
+                                          Colors.white70,
+
+                                          fontSize:
+                                          width * 0.032,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const Icon(
+
+                                  Icons.arrow_forward_ios,
+
+                                  color:
+                                  Colors.white54,
+
+                                  size: 18,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
