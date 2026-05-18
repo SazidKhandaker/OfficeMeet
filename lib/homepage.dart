@@ -7,6 +7,7 @@ import 'package:office_meet/bottomnavbar/Calander.dart' show CalendarPage;
 import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
 import 'package:office_meet/bottomnavbar/profile.dart' show ProfilePage;
 import 'package:office_meet/bottomnavbar/meetingdate.dart' show MeetingBookingPage;
+import 'package:office_meet/department_meetings_page.dart' show DepartmentMeetingsPage;
 
 
 class HomePage extends StatefulWidget {
@@ -653,99 +654,300 @@ class _HomeContentState
                       width * 0.03,
                     ),
 
-                    categoryChip(
-                      "CEO",
-                      width,
+                    GestureDetector(
+
+                      onTap: () {
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+
+                            const DepartmentMeetingsPage(
+
+                              department: "CEO",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "CEO",
+                        width,
+                      ),
                     ),
 
                     SizedBox(
-                      width:
-                      width * 0.03,
+                      width: width * 0.03,
                     ),
 
-                    categoryChip(
-                      "Nurion Lab",
-                      width,
-                    ),
+                    GestureDetector(
 
-                    SizedBox(
-                      width:
-                      width * 0.03,
-                    ),
+                      onTap: () {
 
-                    categoryChip(
-                      "IT",
-                      width,
-                    ),
+                        Navigator.push(
 
-                    SizedBox(
-                      width:
-                      width * 0.03,
-                    ),
+                          context,
 
-                    categoryChip(
-                      "UI/UX",
-                      width,
-                    ),
+                          MaterialPageRoute(
 
-                    SizedBox(
-                      width:
-                      width * 0.03,
-                    ),
+                            builder: (_) =>
 
-                    categoryChip(
-                      "Digital Marketing",
-                      width,
+                            const DepartmentMeetingsPage(
+
+                              department: "Nurion Lab",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "Nurion Lab",
+                        width,
+                      ),
                     ),
 
                     SizedBox(
-                      width:
-                      width * 0.03,
+                      width: width * 0.03,
                     ),
 
-                    categoryChip(
-                      "HR Department",
-                      width,
-                    ),
+                    GestureDetector(
 
-                    SizedBox(
-                      width:
-                      width * 0.03,
-                    ),
+                      onTap: () {
 
-                    categoryChip(
-                      "Account & Finance",
-                      width,
-                    ),
+                        Navigator.push(
 
-                    SizedBox(
-                      width:
-                      width * 0.03,
-                    ),
+                          context,
 
-                    categoryChip(
-                      "Business Development",
-                      width,
-                    ),
+                          MaterialPageRoute(
 
-                    SizedBox(
-                      width:
-                      width * 0.03,
-                    ),
+                            builder: (_) =>
 
-                    categoryChip(
-                      "Nurion Studio",
-                      width,
+                            const DepartmentMeetingsPage(
+
+                              department: "IT",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "IT",
+                        width,
+                      ),
                     ),
 
                     SizedBox(
-                      width:
-                      width * 0.03,
+                      width: width * 0.03,
                     ),
 
-                    categoryChip(
-                      "Other Department",
-                      width,
+                    GestureDetector(
+
+                      onTap: () {
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+
+                            const DepartmentMeetingsPage(
+
+                              department: "UI/UX",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "UI/UX",
+                        width,
+                      ),
+                    ),
+
+                    SizedBox(
+                      width: width * 0.03,
+                    ),
+
+                    GestureDetector(
+
+                      onTap: () {
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+
+                            const DepartmentMeetingsPage(
+
+                              department: "Digital Marketing",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "Digital Marketing",
+                        width,
+                      ),
+                    ),
+
+                    SizedBox(
+                      width: width * 0.03,
+                    ),
+
+                    GestureDetector(
+
+                      onTap: () {
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+
+                            const DepartmentMeetingsPage(
+
+                              department: "HR Department",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "HR Department",
+                        width,
+                      ),
+                    ),
+
+                    SizedBox(
+                      width: width * 0.03,
+                    ),
+
+                    GestureDetector(
+
+                      onTap: () {
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+
+                            const DepartmentMeetingsPage(
+
+                              department: "Account & Finance",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "Account & Finance",
+                        width,
+                      ),
+                    ),
+
+                    SizedBox(
+                      width: width * 0.03,
+                    ),
+
+                    GestureDetector(
+
+                      onTap: () {
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+
+                            const DepartmentMeetingsPage(
+
+                              department: "Business Development",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "Business Development",
+                        width,
+                      ),
+                    ),
+
+                    SizedBox(
+                      width: width * 0.03,
+                    ),
+
+                    GestureDetector(
+
+                      onTap: () {
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+
+                            const DepartmentMeetingsPage(
+
+                              department: "Nurion Studio",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "Nurion Studio",
+                        width,
+                      ),
+                    ),
+
+                    SizedBox(
+                      width: width * 0.03,
+                    ),
+
+                    GestureDetector(
+
+                      onTap: () {
+
+                        Navigator.push(
+
+                          context,
+
+                          MaterialPageRoute(
+
+                            builder: (_) =>
+
+                            const DepartmentMeetingsPage(
+
+                              department: "Other Department",
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: categoryChip(
+                        "Other Department",
+                        width,
+                      ),
                     ),
                   ],
                 ),
