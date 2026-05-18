@@ -10,7 +10,14 @@ import 'package:office_meet/bottomnavbar/meetingdate.dart' show MeetingBookingPa
 
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final int selectedIndex;
+
+  const HomePage({
+
+    super.key,
+
+    this.selectedIndex = 0,
+  });
 
   @override
   State<HomePage> createState() =>
@@ -19,11 +26,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState
     extends State<HomePage> {
+  @override
+  void initState() {
+
+    super.initState();
+
+    currentIndex =
+        widget.selectedIndex;
+  }
 
   final user =
       FirebaseAuth.instance.currentUser;
 
-  int currentIndex = 0;
+  late int currentIndex;
 
   String userName = "User";
 
@@ -259,6 +274,7 @@ class HomeContent extends StatefulWidget {
 class _HomeContentState
     extends State<HomeContent> {
 
+
   String userName = "User";
 
   bool isLoading = true;
@@ -266,6 +282,7 @@ class _HomeContentState
   @override
   void initState() {
     super.initState();
+
 
     getUserData();
   }

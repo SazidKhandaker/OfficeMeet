@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:office_meet/bottomnavbar/Calander.dart' show CalendarPage;
 import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
+import 'package:office_meet/homepage.dart';
 
 class MeetingBookingPage extends StatefulWidget {
 
@@ -573,9 +575,17 @@ class _MeetingBookingPageState
 
                               () {
 
-                            Navigator.pop(
-                              context,
-                            );
+                                Navigator.pushReplacement(
+
+                                  context,
+
+                                  MaterialPageRoute(
+
+                                    builder: (context) =>
+
+                                    const HomePage(),
+                                  ),
+                                );
                           },
                         ),
 
@@ -601,7 +611,22 @@ class _MeetingBookingPageState
                           Icons
                               .calendar_month,
 
-                              () {},
+                              () {
+                                Navigator.pushReplacement(
+
+                                  context,
+
+                                  MaterialPageRoute(
+
+                                    builder: (context) =>
+
+                                    const HomePage(
+                                      selectedIndex: 1,
+                                    ),
+                                  ),
+                                );
+
+                              },
                         ),
                       ],
                     ),

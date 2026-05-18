@@ -1,10 +1,16 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:office_meet/homepage.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
-  const CalendarPage({super.key});
+
+  const CalendarPage({
+    super.key,
+  });
 
   @override
   State<CalendarPage> createState() =>
@@ -14,81 +20,155 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState
     extends State<CalendarPage> {
 
-  DateTime today = DateTime.now();
+  DateTime today =
+  DateTime.now();
 
   DateTime selectedDay =
   DateTime.now();
 
-  final Map<DateTime,
-      List<Map<String, dynamic>>>
-  meetings = {
+  Map<DateTime, List<dynamic>>
+  meetingEvents = {};
 
-    DateTime.utc(2026, 5, 18): [
+  @override
+  void initState() {
 
-      {
-        "title": "UI Team Meeting",
-        "time": "10:00 AM",
-        "members": "6 Members",
-      },
+    super.initState();
 
-      {
-        "title": "Acote Workspace",
-        "time": "2:00 PM",
-        "members": "12 Members",
-      },
-    ],
+    loadMeetingEvents();
+  }
 
-    DateTime.utc(2026, 5, 20): [
+  /// =========================
+  /// LOAD MEETING EVENTS
+  /// =========================
+  Future<void> loadMeetingEvents()
+  async {
 
-      {
-        "title": "Development Sprint",
-        "time": "11:30 AM",
-        "members": "8 Members",
-      },
-    ],
-  };
+    final snapshot =
+    await FirebaseFirestore
+        .instance
+        .collection("meetings")
+        .get();
 
-  List<Map<String, dynamic>>
-  getMeetingsForDay(DateTime day) {
+    Map<DateTime, List<dynamic>>
+    tempEvents = {};
 
-    return meetings[
-    DateTime.utc(
-      day.year,
-      day.month,
-      day.day,
+    for (var doc in snapshot.docs) {
+
+      final dateString =
+      doc["meetingDate"];
+
+      final date =
+      DateTime.parse(
+        dateString,
+      );
+
+      final normalizedDate =
+      DateTime.utc(
+
+        date.year,
+        date.month,
+        date.day,
+      );
+
+      if (tempEvents[
+      normalizedDate
+      ] == null) {
+
+        tempEvents[
+        normalizedDate
+        ] = [];
+      }
+
+      tempEvents[
+      normalizedDate
+      ]!
+          .add(doc.data());
+    }
+
+    setState(() {
+
+      meetingEvents =
+          tempEvents;
+    });
+  }
+
+  /// =========================
+  /// GET MEETINGS
+  /// =========================
+  Future<List<Map<String, dynamic>>>
+  getMeetingsForDay(
+      DateTime day,
+      ) async {
+
+    final snapshot =
+    await FirebaseFirestore
+        .instance
+        .collection("meetings")
+        .where(
+
+      "meetingDate",
+
+      isEqualTo:
+
+      "${day.year.toString().padLeft(4, '0')}-"
+          "${day.month.toString().padLeft(2, '0')}-"
+          "${day.day.toString().padLeft(2, '0')}",
     )
-    ] ??
-        [];
+        .get();
+
+    return snapshot.docs.map((doc) {
+
+      return {
+
+        "title":
+        doc["department"],
+
+        "time":
+        "${doc["startTime"]} - ${doc["endTime"]}",
+
+        "members":
+        "${doc["members"]} Members",
+      };
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
 
     final width =
-        MediaQuery.of(context).size.width;
+        MediaQuery.of(context)
+            .size
+            .width;
 
     final height =
-        MediaQuery.of(context).size.height;
-
-    final selectedMeetings =
-    getMeetingsForDay(selectedDay);
+        MediaQuery.of(context)
+            .size
+            .height;
 
     return Scaffold(
 
       backgroundColor:
-      const Color(0xFF0B0618),
+      const Color(
+        0xFF0B0618,
+      ),
 
       body: SafeArea(
 
         child: Stack(
           children: [
 
+            /// =========================
             /// BACKGROUND GLOW
+            /// =========================
             Positioned(
+
               top: -120,
               left: -80,
+
               child: glowCircle(
+
                 250,
+
                 const Color(
                   0xFFB026FF,
                 ),
@@ -96,17 +176,23 @@ class _CalendarPageState
             ),
 
             Positioned(
+
               bottom: -120,
               right: -80,
+
               child: glowCircle(
+
                 220,
+
                 const Color(
                   0xFF00E5FF,
                 ),
               ),
             ),
 
+            /// =========================
             /// MAIN BODY
+            /// =========================
             SingleChildScrollView(
 
               physics:
@@ -127,23 +213,41 @@ class _CalendarPageState
                 child: Column(
 
                   crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                  CrossAxisAlignment
+                      .start,
 
                   children: [
 
+                    /// =========================
                     /// TOP BAR
+                    /// =========================
                     Row(
 
                       mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                      MainAxisAlignment
+                          .spaceBetween,
 
                       children: [
 
                         topButton(
-                          Icons.arrow_back_ios_new,
+
+                          Icons
+                              .arrow_back_ios_new,
+
                               () {
-                            Navigator.pop(
+
+                            Navigator
+                                .pushReplacement(
+
                               context,
+
+                              MaterialPageRoute(
+
+                                builder:
+                                    (context) =>
+
+                                const HomePage(),
+                              ),
                             );
                           },
                         ),
@@ -166,7 +270,10 @@ class _CalendarPageState
                         ),
 
                         topButton(
-                          Icons.notifications_none,
+
+                          Icons
+                              .notifications_none,
+
                               () {},
                         ),
                       ],
@@ -177,7 +284,9 @@ class _CalendarPageState
                       height * 0.03,
                     ),
 
+                    /// =========================
                     /// CURRENT DATE
+                    /// =========================
                     Text(
 
                       "Today's Date",
@@ -199,7 +308,9 @@ class _CalendarPageState
 
                     Text(
 
-                      "${today.day}/${today.month}/${today.year}",
+                      DateFormat(
+                        "dd MMM yyyy",
+                      ).format(today),
 
                       style: TextStyle(
 
@@ -219,7 +330,9 @@ class _CalendarPageState
                       height * 0.03,
                     ),
 
+                    /// =========================
                     /// CALENDAR
+                    /// =========================
                     Container(
 
                       padding:
@@ -227,7 +340,8 @@ class _CalendarPageState
                         16,
                       ),
 
-                      decoration: BoxDecoration(
+                      decoration:
+                      BoxDecoration(
 
                         borderRadius:
                         BorderRadius.circular(
@@ -273,6 +387,7 @@ class _CalendarPageState
                             (day) {
 
                           return isSameDay(
+
                             selectedDay,
                             day,
                           );
@@ -291,12 +406,24 @@ class _CalendarPageState
                           });
                         },
 
+                        /// =========================
+                        /// EVENT MARKERS
+                        /// =========================
                         eventLoader:
                             (day) {
 
-                          return getMeetingsForDay(
-                            day,
+                          final normalizedDay =
+                          DateTime.utc(
+
+                            day.year,
+                            day.month,
+                            day.day,
                           );
+
+                          return meetingEvents[
+                          normalizedDay
+                          ] ??
+                              [];
                         },
 
                         headerStyle:
@@ -317,13 +444,15 @@ class _CalendarPageState
                             fontWeight:
                             FontWeight.bold,
 
-                            fontSize: 18,
+                            fontSize:
+                            18,
                           ),
 
                           leftChevronIcon:
                           Icon(
 
-                            Icons.chevron_left,
+                            Icons
+                                .chevron_left,
 
                             color:
                             Colors.white,
@@ -332,7 +461,8 @@ class _CalendarPageState
                           rightChevronIcon:
                           Icon(
 
-                            Icons.chevron_right,
+                            Icons
+                                .chevron_right,
 
                             color:
                             Colors.white,
@@ -384,7 +514,9 @@ class _CalendarPageState
                           const BoxDecoration(
 
                             color:
-                            Color(0xFFB026FF),
+                            Color(
+                              0xFFB026FF,
+                            ),
 
                             shape:
                             BoxShape.circle,
@@ -394,7 +526,9 @@ class _CalendarPageState
                           const BoxDecoration(
 
                             color:
-                            Color(0xFF00E5FF),
+                            Color(
+                              0xFF00E5FF,
+                            ),
 
                             shape:
                             BoxShape.circle,
@@ -404,11 +538,14 @@ class _CalendarPageState
                           const BoxDecoration(
 
                             color:
-                            Colors.pinkAccent,
+                            Colors.redAccent,
 
                             shape:
                             BoxShape.circle,
                           ),
+
+                          markersMaxCount:
+                          10,
                         ),
                       ),
                     ),
@@ -418,7 +555,9 @@ class _CalendarPageState
                       height * 0.04,
                     ),
 
+                    /// =========================
                     /// MEETING TITLE
+                    /// =========================
                     Text(
 
                       "Meetings",
@@ -441,79 +580,133 @@ class _CalendarPageState
                       height * 0.02,
                     ),
 
-                    /// NO MEETING
-                    if (selectedMeetings
-                        .isEmpty)
+                    /// =========================
+                    /// MEETING LIST
+                    /// =========================
+                    FutureBuilder<
+                        List<Map<String, dynamic>>>(
 
-                      Center(
-
-                        child: Padding(
-
-                          padding:
-                          EdgeInsets.only(
-                            top:
-                            height * 0.08,
-                          ),
-
-                          child: Column(
-                            children: [
-
-                              Icon(
-
-                                Icons
-                                    .calendar_month,
-
-                                color:
-                                Colors.white24,
-
-                                size: 80,
-                              ),
-
-                              const SizedBox(
-                                height: 15,
-                              ),
-
-                              const Text(
-
-                                "No Meetings Found",
-
-                                style: TextStyle(
-
-                                  color:
-                                  Colors.white70,
-
-                                  fontSize: 18,
-
-                                  fontWeight:
-                                  FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      future:
+                      getMeetingsForDay(
+                        selectedDay,
                       ),
 
-                    /// MEETING LIST
-                    ...selectedMeetings.map(
-                          (meeting) {
+                      builder:
+                          (
+                          context,
+                          snapshot,
+                          ) {
 
-                        return Padding(
+                        if (!snapshot
+                            .hasData) {
 
-                          padding:
-                          const EdgeInsets.only(
-                            bottom: 18,
-                          ),
+                          return const Center(
 
-                          child: meetingCard(
+                            child:
+                            CircularProgressIndicator(),
+                          );
+                        }
 
-                            meeting["title"],
+                        final selectedMeetings =
+                        snapshot.data!;
 
-                            meeting["time"],
+                        /// =========================
+                        /// NO MEETING
+                        /// =========================
+                        if (selectedMeetings
+                            .isEmpty) {
 
-                            meeting["members"],
-                          ),
+                          return Center(
+
+                            child: Padding(
+
+                              padding:
+                              EdgeInsets.only(
+                                top:
+                                height * 0.08,
+                              ),
+
+                              child: Column(
+                                children: [
+
+                                  Icon(
+
+                                    Icons
+                                        .calendar_month,
+
+                                    color:
+                                    Colors.white24,
+
+                                    size: 80,
+                                  ),
+
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+
+                                  const Text(
+
+                                    "No Meetings Found",
+
+                                    style:
+                                    TextStyle(
+
+                                      color:
+                                      Colors.white70,
+
+                                      fontSize:
+                                      18,
+
+                                      fontWeight:
+                                      FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        /// =========================
+                        /// MEETING CARDS
+                        /// =========================
+                        return Column(
+
+                          children:
+                          selectedMeetings.map(
+                                (meeting) {
+
+                              return Padding(
+
+                                padding:
+                                const EdgeInsets.only(
+                                  bottom: 18,
+                                ),
+
+                                child:
+                                meetingCard(
+
+                                  width,
+
+                                  meeting[
+                                  "title"],
+
+                                  meeting[
+                                  "time"],
+
+                                  meeting[
+                                  "members"],
+                                ),
+                              );
+                            },
+                          ).toList(),
                         );
                       },
+                    ),
+
+                    SizedBox(
+                      height:
+                      height * 0.05,
                     ),
                   ],
                 ),
@@ -525,33 +718,47 @@ class _CalendarPageState
     );
   }
 
+  /// =========================
   /// MEETING CARD
+  /// =========================
   Widget meetingCard(
+
+      double width,
+
       String title,
+
       String time,
+
       String members,
       ) {
 
     return Container(
 
       padding:
-      const EdgeInsets.all(20),
+      const EdgeInsets.all(
+        20,
+      ),
 
-      decoration: BoxDecoration(
+      decoration:
+      BoxDecoration(
 
         borderRadius:
-        BorderRadius.circular(28),
+        BorderRadius.circular(
+          28,
+        ),
 
         gradient:
         LinearGradient(
 
           colors: [
 
-            Colors.white.withOpacity(
+            Colors.white
+                .withOpacity(
               0.10,
             ),
 
-            Colors.white.withOpacity(
+            Colors.white
+                .withOpacity(
               0.04,
             ),
           ],
@@ -560,7 +767,8 @@ class _CalendarPageState
         border: Border.all(
 
           color:
-          Colors.white.withOpacity(
+          Colors.white
+              .withOpacity(
             0.08,
           ),
         ),
@@ -574,7 +782,8 @@ class _CalendarPageState
             height: 60,
             width: 60,
 
-            decoration: const BoxDecoration(
+            decoration:
+            const BoxDecoration(
 
               shape:
               BoxShape.circle,
@@ -584,9 +793,13 @@ class _CalendarPageState
 
                 colors: [
 
-                  Color(0xFF00E5FF),
+                  Color(
+                    0xFF00E5FF,
+                  ),
 
-                  Color(0xFFB026FF),
+                  Color(
+                    0xFFB026FF,
+                  ),
                 ],
               ),
             ),
@@ -595,18 +808,22 @@ class _CalendarPageState
 
               Icons.groups,
 
-              color: Colors.white,
+              color:
+              Colors.white,
             ),
           ),
 
-          const SizedBox(width: 18),
+          const SizedBox(
+            width: 18,
+          ),
 
           Expanded(
 
             child: Column(
 
               crossAxisAlignment:
-              CrossAxisAlignment.start,
+              CrossAxisAlignment
+                  .start,
 
               children: [
 
@@ -615,7 +832,7 @@ class _CalendarPageState
                   title,
 
                   style:
-                  const TextStyle(
+                  TextStyle(
 
                     color:
                     Colors.white,
@@ -623,7 +840,8 @@ class _CalendarPageState
                     fontWeight:
                     FontWeight.bold,
 
-                    fontSize: 18,
+                    fontSize:
+                    width * 0.045,
                   ),
                 ),
 
@@ -636,10 +854,13 @@ class _CalendarPageState
                   time,
 
                   style:
-                  const TextStyle(
+                  TextStyle(
 
                     color:
                     Colors.white70,
+
+                    fontSize:
+                    width * 0.034,
                   ),
                 ),
 
@@ -652,10 +873,15 @@ class _CalendarPageState
                   members,
 
                   style:
-                  const TextStyle(
+                  TextStyle(
 
                     color:
-                    Color(0xFF00E5FF),
+                    const Color(
+                      0xFF00E5FF,
+                    ),
+
+                    fontSize:
+                    width * 0.033,
                   ),
                 ),
               ],
@@ -666,7 +892,9 @@ class _CalendarPageState
     );
   }
 
+  /// =========================
   /// TOP BUTTON
+  /// =========================
   Widget topButton(
       IconData icon,
       VoidCallback onTap,
@@ -681,7 +909,8 @@ class _CalendarPageState
         height: 52,
         width: 52,
 
-        decoration: BoxDecoration(
+        decoration:
+        BoxDecoration(
 
           borderRadius:
           BorderRadius.circular(
@@ -689,7 +918,8 @@ class _CalendarPageState
           ),
 
           color:
-          Colors.white.withOpacity(
+          Colors.white
+              .withOpacity(
             0.08,
           ),
         ),
@@ -698,13 +928,16 @@ class _CalendarPageState
 
           icon,
 
-          color: Colors.white,
+          color:
+          Colors.white,
         ),
       ),
     );
   }
 
+  /// =========================
   /// GLOW
+  /// =========================
   Widget glowCircle(
       double size,
       Color color,
@@ -715,13 +948,16 @@ class _CalendarPageState
       height: size,
       width: size,
 
-      decoration: BoxDecoration(
+      decoration:
+      BoxDecoration(
 
         shape:
         BoxShape.circle,
 
         color:
-        color.withOpacity(0.20),
+        color.withOpacity(
+          0.20,
+        ),
 
         boxShadow: [
 
@@ -732,7 +968,8 @@ class _CalendarPageState
               0.45,
             ),
 
-            blurRadius: 120,
+            blurRadius:
+            120,
           ),
         ],
       ),
