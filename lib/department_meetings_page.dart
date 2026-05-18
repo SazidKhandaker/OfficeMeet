@@ -408,47 +408,86 @@ class DepartmentMeetingsPage
                                     children: [
 
                                       /// AVATAR
-                                      CircleAvatar(
+                                      StreamBuilder(
 
-                                        radius:
-                                        width * 0.08,
+                                        stream:
+                                        FirebaseFirestore
+                                            .instance
+                                            .collection("users")
+                                            .where(
 
-                                        backgroundColor:
-                                        Colors.white
-                                            .withOpacity(
-                                          0.10,
-                                        ),
+                                          "fullName",
 
-                                        backgroundImage:
-
-                                        image
-                                            .toString()
-                                            .isNotEmpty
-
-                                            ? NetworkImage(
-                                          image,
+                                          isEqualTo:
+                                          data["fullName"],
                                         )
+                                            .limit(1)
+                                            .snapshots(),
 
-                                            : null,
+                                        builder:
+                                            (context, userSnap) {
 
-                                        child:
+                                          String image = "";
 
-                                        image
-                                            .toString()
-                                            .isEmpty
+                                          if (
 
-                                            ? Icon(
+                                          userSnap.hasData &&
 
-                                          Icons.person,
+                                              userSnap.data!.docs
+                                                  .isNotEmpty
 
-                                          color:
-                                          Colors.white,
+                                          ) {
 
-                                          size:
-                                          width * 0.07,
-                                        )
+                                            final userData =
+                                            userSnap.data!
+                                                .docs
+                                                .first
+                                                .data();
 
-                                            : null,
+                                            image =
+                                                userData["profileImage"]
+                                                    ?? "";
+                                          }
+
+                                          return CircleAvatar(
+
+                                            radius:
+                                            width * 0.08,
+
+                                            backgroundColor:
+                                            Colors.white
+                                                .withOpacity(
+                                              0.10,
+                                            ),
+
+                                            backgroundImage:
+
+                                            image.isNotEmpty
+
+                                                ? NetworkImage(
+                                              image,
+                                            )
+
+                                                : null,
+
+                                            child:
+
+                                            image.isEmpty
+
+                                                ? Icon(
+
+                                              Icons.person,
+
+                                              color:
+                                              Colors.white,
+
+                                              size:
+                                              width * 0.07,
+                                            )
+
+                                                : null,
+                                          );
+                                        },
                                       ),
 
                                       SizedBox(
