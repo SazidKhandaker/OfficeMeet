@@ -263,8 +263,15 @@ class _HomePageState
 /// ======================================================
 /// HOME CONTENT
 /// ======================================================
+/// ======================================================
+/// HOME CONTENT
+/// ======================================================
+
 class HomeContent extends StatefulWidget {
-  const HomeContent({super.key});
+
+  const HomeContent({
+    super.key,
+  });
 
   @override
   State<HomeContent> createState() =>
@@ -274,15 +281,16 @@ class HomeContent extends StatefulWidget {
 class _HomeContentState
     extends State<HomeContent> {
 
-
   String userName = "User";
+
+  String profileImage = "";
 
   bool isLoading = true;
 
   @override
   void initState() {
-    super.initState();
 
+    super.initState();
 
     getUserData();
   }
@@ -290,29 +298,40 @@ class _HomeContentState
   /// =========================
   /// GET USER DATA
   /// =========================
-  Future<void> getUserData() async {
+  Future<void> getUserData()
+  async {
 
     try {
 
       final uid =
-          FirebaseAuth.instance.currentUser!.uid;
+          FirebaseAuth
+              .instance
+              .currentUser!
+              .uid;
 
-      final userData =
-      await FirebaseFirestore.instance
+      FirebaseFirestore
+          .instance
           .collection("users")
           .doc(uid)
-          .get();
+          .snapshots()
+          .listen((userData) {
 
-      if (userData.exists) {
+        if (userData.exists) {
 
-        setState(() {
+          setState(() {
 
-          userName =
-          userData["fullName"];
+            userName =
+                userData["fullName"] ??
+                    "User";
 
-          isLoading = false;
-        });
-      }
+            profileImage =
+                userData["profileImage"] ??
+                    "";
+
+            isLoading = false;
+          });
+        }
+      });
 
     } catch (e) {
 
@@ -327,21 +346,81 @@ class _HomeContentState
   Widget build(BuildContext context) {
 
     final width =
-        MediaQuery.of(context).size.width;
+        MediaQuery.of(context)
+            .size
+            .width;
 
     final height =
-        MediaQuery.of(context).size.height;
+        MediaQuery.of(context)
+            .size
+            .height;
 
     return SafeArea(
 
-      child: SingleChildScrollView(
+      child:
+
+      isLoading
+
+          ? Center(
+
+        child: Column(
+
+          mainAxisAlignment:
+          MainAxisAlignment.center,
+
+          children: [
+
+            SizedBox(
+
+              height: 70,
+              width: 70,
+
+              child:
+              CircularProgressIndicator(
+
+                strokeWidth: 5,
+
+                color:
+                const Color(
+                  0xFFD9FF00,
+                ),
+              ),
+            ),
+
+            SizedBox(
+              height:
+              height * 0.03,
+            ),
+
+            Text(
+
+              "Loading Workspace...",
+
+              style: TextStyle(
+
+                color:
+                Colors.white70,
+
+                fontSize:
+                width * 0.045,
+
+                fontWeight:
+                FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      )
+
+          : SingleChildScrollView(
 
         physics:
         const BouncingScrollPhysics(),
 
         child: Padding(
 
-          padding: EdgeInsets.symmetric(
+          padding:
+          EdgeInsets.symmetric(
 
             horizontal:
             width * 0.05,
@@ -393,17 +472,24 @@ class _HomeContentState
                         width * 0.03,
                       ),
 
+                      /// =========================
+                      /// REALTIME PROFILE IMAGE
+                      /// =========================
                       Container(
 
                         padding:
-                        const EdgeInsets.all(2),
+                        const EdgeInsets.all(
+                          2,
+                        ),
 
-                        decoration: BoxDecoration(
+                        decoration:
+                        BoxDecoration(
 
                           shape:
                           BoxShape.circle,
 
-                          border: Border.all(
+                          border:
+                          Border.all(
 
                             color:
                             const Color(
@@ -414,15 +500,33 @@ class _HomeContentState
                           ),
                         ),
 
-                        child: CircleAvatar(
+                        child:
+                        CircleAvatar(
 
                           radius:
                           width * 0.06,
 
                           backgroundColor:
-                          Colors.grey.shade800,
+                          Colors.grey
+                              .shade900,
 
-                          child: Icon(
+                          backgroundImage:
+
+                          profileImage
+                              .isNotEmpty
+
+                              ? NetworkImage(
+                            profileImage,
+                          )
+
+                              : null,
+
+                          child:
+
+                          profileImage
+                              .isEmpty
+
+                              ? Icon(
 
                             Icons.person,
 
@@ -431,7 +535,9 @@ class _HomeContentState
 
                             size:
                             width * 0.07,
-                          ),
+                          )
+
+                              : null,
                         ),
                       ),
                     ],
@@ -455,7 +561,8 @@ class _HomeContentState
 
                     TextSpan(
 
-                      text: "Hello, ",
+                      text:
+                      "Hello, ",
 
                       style: TextStyle(
 
@@ -505,7 +612,8 @@ class _HomeContentState
                 style: TextStyle(
 
                   color:
-                  Colors.white.withOpacity(
+                  Colors.white
+                      .withOpacity(
                     0.6,
                   ),
 
@@ -519,6 +627,7 @@ class _HomeContentState
                 height * 0.035,
               ),
 
+
               /// =========================
               /// CATEGORY
               /// =========================
@@ -531,17 +640,11 @@ class _HomeContentState
                   children: [
 
                     glassCategory(
-                      icon: Icons.search,
-                      width: width,
-                    ),
 
-                    SizedBox(
+                      icon:
+                      Icons.search,
+
                       width:
-                      width * 0.03,
-                    ),
-
-                    categoryChip(
-                      "HRD Meeting",
                       width,
                     ),
 
@@ -551,7 +654,7 @@ class _HomeContentState
                     ),
 
                     categoryChip(
-                      "Developer Team",
+                      "CEO",
                       width,
                     ),
 
@@ -561,7 +664,87 @@ class _HomeContentState
                     ),
 
                     categoryChip(
-                      "Workspace",
+                      "Nurion Lab",
+                      width,
+                    ),
+
+                    SizedBox(
+                      width:
+                      width * 0.03,
+                    ),
+
+                    categoryChip(
+                      "IT",
+                      width,
+                    ),
+
+                    SizedBox(
+                      width:
+                      width * 0.03,
+                    ),
+
+                    categoryChip(
+                      "UI/UX",
+                      width,
+                    ),
+
+                    SizedBox(
+                      width:
+                      width * 0.03,
+                    ),
+
+                    categoryChip(
+                      "Digital Marketing",
+                      width,
+                    ),
+
+                    SizedBox(
+                      width:
+                      width * 0.03,
+                    ),
+
+                    categoryChip(
+                      "HR Department",
+                      width,
+                    ),
+
+                    SizedBox(
+                      width:
+                      width * 0.03,
+                    ),
+
+                    categoryChip(
+                      "Account & Finance",
+                      width,
+                    ),
+
+                    SizedBox(
+                      width:
+                      width * 0.03,
+                    ),
+
+                    categoryChip(
+                      "Business Development",
+                      width,
+                    ),
+
+                    SizedBox(
+                      width:
+                      width * 0.03,
+                    ),
+
+                    categoryChip(
+                      "Nurion Studio",
+                      width,
+                    ),
+
+                    SizedBox(
+                      width:
+                      width * 0.03,
+                    ),
+
+                    categoryChip(
+                      "Other Department",
                       width,
                     ),
                   ],
@@ -578,7 +761,7 @@ class _HomeContentState
               /// =========================
               Text(
 
-                "My Task",
+                "My Schedule",
 
                 style: TextStyle(
 
@@ -599,352 +782,445 @@ class _HomeContentState
               ),
 
               /// =========================
-              /// TASK CARD
+              /// REALTIME MEETING LIST
               /// =========================
-              Container(
+              SizedBox(
 
                 height:
-                height * 0.60,
+                height * 0.4,
 
-                width:
-                double.infinity,
+                child:
+                StreamBuilder<QuerySnapshot>(
 
-                decoration: BoxDecoration(
+                  stream:
+                  FirebaseFirestore
+                      .instance
+                      .collection("meetings")
+                      .where(
 
-                  borderRadius:
-                  BorderRadius.circular(
-                    32,
-                  ),
+                    "fullName",
 
-                  image:
-                  const DecorationImage(
+                    isEqualTo:
+                    userName,
+                  )
+                      .snapshots(),
 
-                    image:
-                    AssetImage(
-                      "assets/images/meeting.png",
-                    ),
+                  builder:
+                      (
+                      context,
+                      snapshot,
+                      ) {
 
-                    fit:
-                    BoxFit.cover,
-                  ),
-                ),
+                    /// LOADING
+                    if (!snapshot
+                        .hasData) {
 
-                child: Container(
+                      return const Center(
 
-                  padding:
-                  EdgeInsets.all(
-                    width * 0.06,
-                  ),
-
-                  decoration: BoxDecoration(
-
-                    borderRadius:
-                    BorderRadius.circular(
-                      32,
-                    ),
-
-                    gradient:
-                    LinearGradient(
-
-                      begin:
-                      Alignment.topCenter,
-
-                      end:
-                      Alignment.bottomCenter,
-
-                      colors: [
-
-                        Colors.black.withOpacity(
-                          0.15,
-                        ),
-
-                        Colors.black.withOpacity(
-                          0.80,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  child: Column(
-
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
-
-                    children: [
-
-                      /// TOP
-                      Row(
-
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
-
-                        children: [
-
-                          Row(
-                            children: [
-
-                              Container(
-
-                                height:
-                                width * 0.12,
-
-                                width:
-                                width * 0.12,
-
-                                decoration:
-                                BoxDecoration(
-
-                                  shape:
-                                  BoxShape.circle,
-
-                                  color:
-                                  Colors.white.withOpacity(
-                                    0.12,
-                                  ),
-                                ),
-
-                                child: Icon(
-
-                                  Icons
-                                      .calendar_today_rounded,
-
-                                  color:
-                                  Colors.white,
-
-                                  size:
-                                  width * 0.05,
-                                ),
-                              ),
-
-                              SizedBox(
-                                width:
-                                width * 0.03,
-                              ),
-
-                              Column(
-
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-
-                                children: [
-
-                                  Text(
-
-                                    "May 22, 2025",
-
-                                    style: TextStyle(
-
-                                      color:
-                                      Colors.white70,
-
-                                      fontSize:
-                                      width * 0.03,
-                                    ),
-                                  ),
-
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
-
-                                  Text(
-
-                                    "10:00 - 11:00 AM",
-
-                                    style: TextStyle(
-
-                                      color:
-                                      Colors.white,
-
-                                      fontWeight:
-                                      FontWeight.bold,
-
-                                      fontSize:
-                                      width * 0.04,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          Container(
-
-                            height:
-                            width * 0.12,
-
-                            width:
-                            width * 0.12,
-
-                            decoration:
-                            BoxDecoration(
-
-                              shape:
-                              BoxShape.circle,
-
-                              border: Border.all(
-
-                                color:
-                                Colors.white24,
-                              ),
-                            ),
-
-                            child: Icon(
-
-                              Icons.arrow_outward_rounded,
-
-                              color:
-                              Colors.white,
-
-                              size:
-                              width * 0.055,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      /// TITLE
-                      Text(
-
-                        "Development\nSprint Team\nMeeting",
-
-                        style: TextStyle(
-
+                        child:
+                        CircularProgressIndicator(
                           color:
                           Colors.white,
-
-                          fontWeight:
-                          FontWeight.bold,
-
-                          height: 1,
-
-                          fontSize:
-                          width * 0.085,
                         ),
-                      ),
+                      );
+                    }
 
-                      /// MEMBERS
-                      Column(
+                    final meetings =
+                        snapshot.data!.docs;
 
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    /// NO DATA
+                    if (meetings.isEmpty) {
 
-                        children: [
+                      return Container(
 
-                          Text(
-
-                            "Joined Members",
-
-                            style: TextStyle(
-
-                              color:
-                              Colors.white70,
-
-                              fontSize:
-                              width * 0.035,
-                            ),
-                          ),
-
-                          SizedBox(
-                            height:
-                            height * 0.015,
-                          ),
-
-                          Row(
-                            children: [
-
-                              memberImage(
-                                "assets/images/p1.jpg",
-                              ),
-
-                              memberImage(
-                                "assets/images/p2.jpg",
-                              ),
-
-                              memberImage(
-                                "assets/images/p3.jpg",
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      /// BOTTOM
-                      Container(
-
-                        padding:
-                        EdgeInsets.symmetric(
-
-                          horizontal:
-                          width * 0.05,
-
-                          vertical:
-                          height * 0.018,
-                        ),
+                        width:
+                        double.infinity,
 
                         decoration:
                         BoxDecoration(
 
                           borderRadius:
                           BorderRadius.circular(
-                            20,
+                            32,
                           ),
 
                           color:
-                          Colors.black.withOpacity(
-                            0.35,
+                          Colors.white
+                              .withOpacity(
+                            0.05,
                           ),
                         ),
 
-                        child: Row(
+                        child: Column(
 
                           mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          MainAxisAlignment.center,
 
                           children: [
 
-                            Text(
+                            Icon(
 
-                              "Work in Progress",
+                              Icons.calendar_month,
 
-                              style: TextStyle(
+                              color:
+                              Colors.white24,
 
-                                color:
-                                Colors.white,
-
-                                fontWeight:
-                                FontWeight.w500,
-
-                                fontSize:
-                                width * 0.04,
-                              ),
+                              size: 70,
                             ),
 
-                            Text(
+                            const SizedBox(
+                              height: 15,
+                            ),
 
-                              "80%",
+                            const Text(
+
+                              "No Meeting Scheduled",
 
                               style: TextStyle(
 
                                 color:
-                                const Color(
-                                  0xFFD9FF00,
-                                ),
+                                Colors.white70,
+
+                                fontSize: 18,
 
                                 fontWeight:
-                                FontWeight.bold,
-
-                                fontSize:
-                                width * 0.06,
+                                FontWeight.w600,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
+                      );
+                    }
+
+                    /// =========================
+                    /// HORIZONTAL LISTVIEW
+                    /// =========================
+                    return ListView.builder(
+
+                      scrollDirection:
+                      Axis.horizontal,
+
+                      physics:
+                      const BouncingScrollPhysics(),
+
+                      itemCount:
+                      meetings.length,
+
+                      itemBuilder:
+                          (
+                          context,
+                          index,
+                          ) {
+
+                        final data =
+                        meetings[index]
+                            .data()
+                        as Map<String,
+                            dynamic>;
+
+                        return Container(
+
+                          width:
+                          width * 0.82,
+
+                          margin:
+                          EdgeInsets.only(
+
+                            right:
+                            width * 0.04,
+                          ),
+
+                          decoration:
+                          BoxDecoration(
+
+                            borderRadius:
+                            BorderRadius.circular(
+                              32,
+                            ),
+
+                            image:
+                            const DecorationImage(
+
+                              image:
+                              AssetImage(
+                                "assets/images/meeting.png",
+                              ),
+
+                              fit:
+                              BoxFit.cover,
+                            ),
+                          ),
+
+                          child: Container(
+
+                            padding:
+                            EdgeInsets.all(
+                              width * 0.06,
+                            ),
+
+                            decoration:
+                            BoxDecoration(
+
+                              borderRadius:
+                              BorderRadius.circular(
+                                32,
+                              ),
+
+                              gradient:
+                              LinearGradient(
+
+                                begin:
+                                Alignment
+                                    .topCenter,
+
+                                end:
+                                Alignment
+                                    .bottomCenter,
+
+                                colors: [
+
+                                  Colors.black
+                                      .withOpacity(
+                                    0.15,
+                                  ),
+
+                                  Colors.black
+                                      .withOpacity(
+                                    0.80,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            child: Column(
+
+                              mainAxisAlignment:
+                              MainAxisAlignment
+                                  .spaceBetween,
+
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .start,
+
+                              children: [
+
+                                /// TOP
+                                Row(
+
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
+
+                                  children: [
+
+                                    Row(
+                                      children: [
+
+                                        Container(
+
+                                          height:
+                                          width * 0.12,
+
+                                          width:
+                                          width * 0.12,
+
+                                          decoration:
+                                          BoxDecoration(
+
+                                            shape:
+                                            BoxShape.circle,
+
+                                            color:
+                                            Colors.white
+                                                .withOpacity(
+                                              0.12,
+                                            ),
+                                          ),
+
+                                          child: Icon(
+
+                                            Icons
+                                                .calendar_today_rounded,
+
+                                            color:
+                                            Colors.white,
+
+                                            size:
+                                            width * 0.05,
+                                          ),
+                                        ),
+
+                                        SizedBox(
+                                          width:
+                                          width * 0.03,
+                                        ),
+
+                                        Column(
+
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment
+                                              .start,
+
+                                          children: [
+
+                                            Text(
+
+                                              data["meetingDate"],
+
+                                              style:
+                                              TextStyle(
+
+                                                color:
+                                                Colors.white70,
+
+                                                fontSize:
+                                                width * 0.03,
+                                              ),
+                                            ),
+
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
+
+                                            Text(
+
+                                              "${data["startTime"]} - ${data["endTime"]}",
+
+                                              style:
+                                              TextStyle(
+
+                                                color:
+                                                Colors.white,
+
+                                                fontWeight:
+                                                FontWeight.bold,
+
+                                                fontSize:
+                                                width * 0.04,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+
+                                    Container(
+
+                                      height:
+                                      width * 0.12,
+
+                                      width:
+                                      width * 0.12,
+
+                                      decoration:
+                                      BoxDecoration(
+
+                                        shape:
+                                        BoxShape.circle,
+
+                                        border:
+                                        Border.all(
+
+                                          color:
+                                          Colors.white24,
+                                        ),
+                                      ),
+
+                                      child: Icon(
+
+                                        Icons
+                                            .arrow_outward_rounded,
+
+                                        color:
+                                        Colors.white,
+
+                                        size:
+                                        width * 0.055,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                /// TITLE
+                                Text(
+
+                                  data["department"],
+
+                                  style: TextStyle(
+
+                                    color:
+                                    Colors.white,
+
+                                    fontWeight:
+                                    FontWeight.bold,
+
+                                    height: 1,
+
+                                    fontSize:
+                                    width * 0.085,
+                                  ),
+                                ),
+
+                                /// MEMBERS
+                                Column(
+
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment
+                                      .start,
+
+                                  children: [
+
+                                    Text(
+
+                                      "Joined Members",
+
+                                      style:
+                                      TextStyle(
+
+                                        color:
+                                        Colors.white70,
+
+                                        fontSize:
+                                        width * 0.035,
+                                      ),
+                                    ),
+
+                                    SizedBox(
+                                      height:
+                                      height * 0.015,
+                                    ),
+
+                                    Text(
+
+                                      "${data["members"]} Members",
+
+                                      style:
+                                      TextStyle(
+
+                                        color:
+                                        const Color(
+                                          0xFFD9FF00,
+                                        ),
+
+                                        fontWeight:
+                                        FontWeight.bold,
+
+                                        fontSize:
+                                        width * 0.045,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                /// BOTTOM
+
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
 
@@ -959,6 +1235,9 @@ class _HomeContentState
     );
   }
 
+  /// =========================
+  /// CATEGORY CHIP
+  /// =========================
   Widget categoryChip(
       String title,
       double width,
@@ -976,21 +1255,27 @@ class _HomeContentState
         width * 0.04,
       ),
 
-      decoration: BoxDecoration(
+      decoration:
+      BoxDecoration(
 
         borderRadius:
-        BorderRadius.circular(24),
+        BorderRadius.circular(
+          24,
+        ),
 
-        border: Border.all(
+        border:
+        Border.all(
 
           color:
-          Colors.white.withOpacity(
+          Colors.white
+              .withOpacity(
             0.10,
           ),
         ),
 
         color:
-        Colors.white.withOpacity(
+        Colors.white
+            .withOpacity(
           0.03,
         ),
       ),
@@ -1014,6 +1299,9 @@ class _HomeContentState
     );
   }
 
+  /// =========================
+  /// SEARCH CIRCLE
+  /// =========================
   Widget glassCategory({
 
     required IconData icon,
@@ -1029,13 +1317,15 @@ class _HomeContentState
       width:
       width * 0.14,
 
-      decoration: BoxDecoration(
+      decoration:
+      BoxDecoration(
 
         shape:
         BoxShape.circle,
 
         color:
-        Colors.white.withOpacity(
+        Colors.white
+            .withOpacity(
           0.06,
         ),
       ),
@@ -1053,6 +1343,9 @@ class _HomeContentState
     );
   }
 
+  /// =========================
+  /// TOP BUTTON
+  /// =========================
   Widget glassCircleButton({
 
     required IconData icon,
@@ -1065,13 +1358,15 @@ class _HomeContentState
       height: size,
       width: size,
 
-      decoration: BoxDecoration(
+      decoration:
+      BoxDecoration(
 
         shape:
         BoxShape.circle,
 
         color:
-        Colors.white.withOpacity(
+        Colors.white
+            .withOpacity(
           0.06,
         ),
       ),
@@ -1085,28 +1380,6 @@ class _HomeContentState
 
         size:
         size * 0.42,
-      ),
-    );
-  }
-
-  Widget memberImage(
-      String image,
-      ) {
-
-    return Transform.translate(
-
-      offset:
-      const Offset(-10, 0),
-
-      child: CircleAvatar(
-
-        radius: 20,
-
-        backgroundColor:
-        Colors.black,
-
-        backgroundImage:
-        AssetImage(image),
       ),
     );
   }
