@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -1016,39 +1016,41 @@ class _HomeContentState
                                     Row(
                                       children: [
 
-                                        Container(
 
-                                          height:
-                                          width * 0.12,
+                                          Container(
 
-                                          width:
-                                          width * 0.12,
+                                            height:
+                                            width * 0.12,
 
-                                          decoration:
-                                          BoxDecoration(
+                                            width:
+                                            width * 0.12,
 
-                                            shape:
-                                            BoxShape.circle,
+                                            decoration:
+                                            BoxDecoration(
 
-                                            color:
-                                            Colors.white
-                                                .withOpacity(
-                                              0.12,
+                                              shape:
+                                              BoxShape.circle,
+
+                                              color:
+                                              Colors.white
+                                                  .withOpacity(
+                                                0.12,
+                                              ),
+                                            ),
+
+                                            child: Icon(
+
+                                              Icons
+                                                  .calendar_today_rounded,
+
+                                              color:
+                                              Colors.white,
+
+                                              size:
+                                              width * 0.05,
                                             ),
                                           ),
 
-                                          child: Icon(
-
-                                            Icons
-                                                .calendar_today_rounded,
-
-                                            color:
-                                            Colors.white,
-
-                                            size:
-                                            width * 0.05,
-                                          ),
-                                        ),
 
                                         SizedBox(
                                           width:
@@ -1104,38 +1106,50 @@ class _HomeContentState
                                       ],
                                     ),
 
-                                    Container(
+                                    GestureDetector(
+                                      onTap: (){
 
-                                      height:
-                                      width * 0.12,
+                                        showMeetingDialog(
 
-                                      width:
-                                      width * 0.12,
+                                          meetingId:
+                                          meetings[index].id,
 
-                                      decoration:
-                                      BoxDecoration(
+                                          data: data,
+                                        );
+                                      },
+                                      child: Container(
 
-                                        shape:
-                                        BoxShape.circle,
+                                        height:
+                                        width * 0.12,
 
-                                        border:
-                                        Border.all(
+                                        width:
+                                        width * 0.12,
+
+                                        decoration:
+                                        BoxDecoration(
+
+                                          shape:
+                                          BoxShape.circle,
+
+                                          border:
+                                          Border.all(
+
+                                            color:
+                                            Colors.white24,
+                                          ),
+                                        ),
+
+                                        child: Icon(
+
+                                          Icons
+                                              .arrow_outward_rounded,
 
                                           color:
-                                          Colors.white24,
+                                          Colors.white,
+
+                                          size:
+                                          width * 0.055,
                                         ),
-                                      ),
-
-                                      child: Icon(
-
-                                        Icons
-                                            .arrow_outward_rounded,
-
-                                        color:
-                                        Colors.white,
-
-                                        size:
-                                        width * 0.055,
                                       ),
                                     ),
                                   ],
@@ -1369,10 +1383,940 @@ class _HomeContentState
       ),
     );
   }
+  /// =========================
+  /// SHOW MEETING DIALOG
+  /// =========================
+  void showMeetingDialog({
 
+    required String meetingId,
+
+    required Map<String, dynamic> data,
+  }) {
+
+    final membersController =
+    TextEditingController(
+
+      text:
+      data["members"],
+    );
+
+    DateTime selectedDate =
+    DateTime.parse(
+      data["meetingDate"],
+    );
+
+    final startDateTime =
+    convertToDateTime(
+
+      time:
+      data["startTime"],
+
+      date:
+      selectedDate,
+    );
+
+    final endDateTime =
+    convertToDateTime(
+
+      time:
+      data["endTime"],
+
+      date:
+      selectedDate,
+    );
+
+    TimeOfDay startTime =
+    TimeOfDay(
+
+      hour:
+      startDateTime.hour,
+
+      minute:
+      startDateTime.minute,
+    );
+
+    TimeOfDay endTime =
+    TimeOfDay(
+
+      hour:
+      endDateTime.hour,
+
+      minute:
+      endDateTime.minute,
+    );
+
+    showDialog(
+
+      context: context,
+
+      builder: (context) {
+
+        final width =
+            MediaQuery.of(context)
+                .size
+                .width;
+
+        final height =
+            MediaQuery.of(context)
+                .size
+                .height;
+
+        return StatefulBuilder(
+
+          builder:
+              (context, setDialogState) {
+
+            return Dialog(
+
+              backgroundColor:
+              Colors.transparent,
+
+              child: Container(
+
+                padding:
+                EdgeInsets.all(
+                  width * 0.06,
+                ),
+
+                decoration:
+                BoxDecoration(
+
+                  borderRadius:
+                  BorderRadius.circular(
+                    32,
+                  ),
+
+                  gradient:
+                  LinearGradient(
+
+                    begin:
+                    Alignment.topLeft,
+
+                    end:
+                    Alignment.bottomRight,
+
+                    colors: [
+
+                      const Color(
+                        0xFF151127,
+                      ),
+
+                      const Color(
+                        0xFF090014,
+                      ),
+                    ],
+                  ),
+
+                  border:
+                  Border.all(
+
+                    color:
+                    Colors.white
+                        .withOpacity(
+                      0.08,
+                    ),
+                  ),
+                ),
+
+                child: SingleChildScrollView(
+
+                  child: Column(
+
+                    crossAxisAlignment:
+                    CrossAxisAlignment
+                        .start,
+
+                    children: [
+
+                      /// TITLE
+                      Row(
+
+                        mainAxisAlignment:
+                        MainAxisAlignment
+                            .spaceBetween,
+
+                        children: [
+
+                          Text(
+
+                            "Meeting Details",
+
+                            style: TextStyle(
+
+                              color:
+                              Colors.white,
+
+                              fontWeight:
+                              FontWeight.bold,
+
+                              fontSize:
+                              width * 0.055,
+                            ),
+                          ),
+
+                          GestureDetector(
+
+                            onTap: () {
+
+                              Navigator.pop(
+                                context,
+                              );
+                            },
+
+                            child: const Icon(
+
+                              Icons.close,
+
+                              color:
+                              Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(
+                        height:
+                        height * 0.03,
+                      ),
+
+                      /// DATE
+                      buildButton(
+
+                        title:
+                        "${selectedDate.day}-${selectedDate.month}-${selectedDate.year}",
+
+                        icon:
+                        Icons.calendar_month,
+
+                        onTap: () async {
+
+                          final picked =
+                          await showDatePicker(
+
+                            context: context,
+
+                            initialDate:
+                            selectedDate,
+
+                            firstDate:
+                            DateTime.now(),
+
+                            lastDate:
+                            DateTime(2035),
+                          );
+
+                          if (picked != null) {
+
+                            setDialogState(() {
+
+                              selectedDate =
+                                  picked;
+                            });
+                          }
+                        },
+                      ),
+
+                      SizedBox(
+                        height:
+                        height * 0.02,
+                      ),
+
+                      /// START TIME
+                      buildButton(
+
+                        title:
+                        startTime.format(
+                          context,
+                        ),
+
+                        icon:
+                        Icons.access_time,
+
+                        onTap: () async {
+
+                          final picked =
+                          await showTimePicker(
+
+                            context: context,
+
+                            initialTime:
+                            startTime,
+                          );
+
+                          if (picked != null) {
+
+                            setDialogState(() {
+
+                              startTime =
+                                  picked;
+                            });
+                          }
+                        },
+                      ),
+
+                      SizedBox(
+                        height:
+                        height * 0.02,
+                      ),
+
+                      /// END TIME
+                      buildButton(
+
+                        title:
+                        endTime.format(
+                          context,
+                        ),
+
+                        icon:
+                        Icons.timer,
+
+                        onTap: () async {
+
+                          final picked =
+                          await showTimePicker(
+
+                            context: context,
+
+                            initialTime:
+                            endTime,
+                          );
+
+                          if (picked != null) {
+
+                            setDialogState(() {
+
+                              endTime =
+                                  picked;
+                            });
+                          }
+                        },
+                      ),
+
+                      SizedBox(
+                        height:
+                        height * 0.02,
+                      ),
+
+                      /// MEMBERS
+                      TextField(
+
+                        controller:
+                        membersController,
+
+                        style:
+                        const TextStyle(
+                          color:
+                          Colors.white,
+                        ),
+
+                        decoration:
+                        InputDecoration(
+
+                          filled: true,
+
+                          fillColor:
+                          Colors.white
+                              .withOpacity(
+                            0.06,
+                          ),
+
+                          hintText:
+                          "Members",
+
+                          hintStyle:
+                          const TextStyle(
+                            color:
+                            Colors.white54,
+                          ),
+
+                          prefixIcon:
+                          const Icon(
+
+                            Icons.groups,
+
+                            color:
+                            Colors.white70,
+                          ),
+
+                          border:
+                          OutlineInputBorder(
+
+                            borderRadius:
+                            BorderRadius.circular(
+                              20,
+                            ),
+
+                            borderSide:
+                            BorderSide.none,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height:
+                        height * 0.04,
+                      ),
+
+                      /// UPDATE BUTTON
+                      GestureDetector(
+
+                        onTap: () async {
+
+                          /// =========================
+                          /// START & END VALIDATION
+                          /// =========================
+                          if (
+
+                          startTime.hour == endTime.hour &&
+
+                              startTime.minute == endTime.minute
+
+                          ) {
+
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(
+
+                              const SnackBar(
+
+                                backgroundColor:
+                                Colors.red,
+
+                                content: Text(
+
+                                  "Start & End time can't be same",
+                                ),
+                              ),
+                            );
+
+                            return;
+                          }
+                          final startMinutes =
+
+                              startTime.hour * 60 +
+                                  startTime.minute;
+
+                          final endMinutes =
+
+                              endTime.hour * 60 +
+                                  endTime.minute;
+
+                          if (endMinutes <= startMinutes) {
+
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(
+
+                              const SnackBar(
+
+                                backgroundColor:
+                                Colors.red,
+
+                                content: Text(
+
+                                  "End time must be after start time",
+                                ),
+                              ),
+                            );
+
+                            return;
+                          }
+
+                          /// =========================
+                          /// CHECK CONFLICT
+                          /// =========================
+                          final hasConflict =
+                          await checkConflict(
+
+                            meetingId:
+                            meetingId,
+
+                            date:
+                            selectedDate,
+
+                            start:
+                            startTime,
+
+                            end:
+                            endTime,
+                          );
+                          print(hasConflict);
+                          if (hasConflict) {
+
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(
+
+                              const SnackBar(
+
+                                backgroundColor:
+                                Colors.red,
+
+                                content: Text(
+
+                                  "This meeting time is already booked.",
+                                ),
+                              ),
+                            );
+
+                            return;
+                          }
+
+                          /// =========================
+                          /// UPDATE FIREBASE
+                          /// =========================
+                          await FirebaseFirestore
+                              .instance
+                              .collection("meetings")
+                              .doc(meetingId)
+                              .update({
+
+                            "meetingDate":
+
+                            "${selectedDate.year.toString().padLeft(4, '0')}-"
+                                "${selectedDate.month.toString().padLeft(2, '0')}-"
+                                "${selectedDate.day.toString().padLeft(2, '0')}",
+
+                            "startTime":
+                            startTime.format(
+                              context,
+                            ),
+
+                            "endTime":
+                            endTime.format(
+                              context,
+                            ),
+
+                            "members":
+                            membersController.text,
+                          });
+
+                          /// CLOSE DIALOG
+                          if (mounted) {
+
+                            Navigator.pop(
+                              context,
+                            );
+
+                            ScaffoldMessenger.of(
+                              this.context,
+                            ).showSnackBar(
+
+                              const SnackBar(
+
+                                backgroundColor:
+                                Colors.green,
+
+                                content: Text(
+
+                                  "Meeting Updated Successfully",
+                                ),
+                              ),
+                            );
+                          }
+                        },
+
+                        child: Container(
+
+                          width:
+                          double.infinity,
+
+                          padding:
+                          const EdgeInsets.symmetric(
+                            vertical: 18,
+                          ),
+
+                          decoration:
+                          BoxDecoration(
+
+                            borderRadius:
+                            BorderRadius.circular(
+                              22,
+                            ),
+
+                            gradient:
+                            const LinearGradient(
+
+                              colors: [
+
+                                Color(
+                                  0xFFD9FF00,
+                                ),
+
+                                Color(
+                                  0xFFB6FF00,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          child: const Center(
+
+                            child: Text(
+
+                              "Update Meeting",
+
+                              style: TextStyle(
+
+                                color:
+                                Colors.black,
+
+                                fontWeight:
+                                FontWeight.bold,
+
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height:
+                        height * 0.02,
+                      ),
+
+                      /// DELETE BUTTON
+                      GestureDetector(
+
+                        onTap: () async {
+
+                          await FirebaseFirestore
+                              .instance
+                              .collection("meetings")
+                              .doc(meetingId)
+                              .delete();
+
+                          if (mounted) {
+
+                            Navigator.of(context).pop();
+
+                            Future.delayed(
+
+                              const Duration(
+                                milliseconds: 200,
+                              ),
+
+                                  () {
+
+                                setState(() {});
+                              },
+                            );
+
+                            ScaffoldMessenger.of(
+                              this.context,
+                            ).showSnackBar(
+
+                              const SnackBar(
+
+                                backgroundColor:
+                                Colors.red,
+
+                                content: Text(
+                                  "Meeting Deleted Successfully",
+                                ),
+                              ),
+                            );
+                          }
+                        },
+
+                        child: Container(
+
+                          width:
+                          double.infinity,
+
+                          padding:
+                          const EdgeInsets.symmetric(
+                            vertical: 18,
+                          ),
+
+                          decoration:
+                          BoxDecoration(
+
+                            borderRadius:
+                            BorderRadius.circular(
+                              22,
+                            ),
+
+                            color:
+                            Colors.red,
+                          ),
+
+                          child: const Center(
+
+                            child: Text(
+
+                              "Delete Meeting",
+
+                              style: TextStyle(
+
+                                color:
+                                Colors.white,
+
+                                fontWeight:
+                                FontWeight.bold,
+
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  DateTime convertToDateTime({
+
+    required String time,
+
+    required DateTime date,
+  }) {
+
+    final cleaned =
+
+    time
+
+        .replaceAll(
+      RegExp(r'\s+'),
+      ' ',
+    )
+
+        .replaceAll(
+      '\u202F',
+      ' ',
+    )
+
+        .trim();
+
+    final parsed =
+    DateFormat(
+      "h:mm a",
+    ).parse(cleaned);
+
+    return DateTime(
+
+      date.year,
+      date.month,
+      date.day,
+
+      parsed.hour,
+      parsed.minute,
+    );
+  }
+  String normalizeTime(
+      String time,
+      ) {
+
+    return time
+
+        .replaceAll(
+      RegExp(r'\s+'),
+      ' ',
+    )
+
+        .replaceAll(
+      ' ',
+      ' ',
+    )
+
+        .trim();
+  }
+
+  Widget buildButton({
+
+    required String title,
+
+    required IconData icon,
+
+    required VoidCallback onTap,
+  }) {
+
+    return GestureDetector(
+
+      onTap: onTap,
+
+      child: Container(
+
+        padding:
+        const EdgeInsets.symmetric(
+
+          horizontal: 18,
+          vertical: 18,
+        ),
+
+        decoration:
+        BoxDecoration(
+
+          borderRadius:
+          BorderRadius.circular(
+            20,
+          ),
+
+          color:
+          Colors.white
+              .withOpacity(
+            0.06,
+          ),
+        ),
+
+        child: Row(
+
+          children: [
+
+            Icon(
+
+              icon,
+
+              color:
+              Colors.white,
+            ),
+
+            const SizedBox(
+              width: 12,
+            ),
+
+            Text(
+
+              title,
+
+              style:
+              const TextStyle(
+
+                color:
+                Colors.white,
+
+                fontWeight:
+                FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Future<bool> checkConflict({
+
+    required String meetingId,
+
+    required DateTime date,
+
+    required TimeOfDay start,
+
+    required TimeOfDay end,
+  }) async {
+
+    try {
+
+      final selectedDate =
+
+          "${date.year.toString().padLeft(4, '0')}-"
+          "${date.month.toString().padLeft(2, '0')}-"
+          "${date.day.toString().padLeft(2, '0')}";
+
+      final snapshot =
+      await FirebaseFirestore
+          .instance
+          .collection("meetings")
+          .where(
+        "meetingDate",
+        isEqualTo: selectedDate,
+      )
+          .get();
+
+      /// =========================
+      /// NEW START & END
+      /// =========================
+      final newStart = DateTime(
+
+        date.year,
+        date.month,
+        date.day,
+
+        start.hour,
+        start.minute,
+      );
+
+      final newEnd = DateTime(
+
+        date.year,
+        date.month,
+        date.day,
+
+        end.hour,
+        end.minute,
+      );
+
+      for (final doc in snapshot.docs) {
+
+        /// SKIP CURRENT
+        if (doc.id == meetingId) {
+          continue;
+        }
+
+        final existingStart =
+
+        convertToDateTime(
+
+          time:
+          doc["startTime"],
+
+          date:
+          date,
+        );
+
+        final existingEnd =
+
+        convertToDateTime(
+
+          time:
+          doc["endTime"],
+
+          date:
+          date,
+        );
+
+        /// =========================
+        /// OVERLAP CHECK
+        /// =========================
+
+        final isOverlap =
+
+            newStart.isBefore(
+              existingEnd,
+            )
+
+                &&
+
+                newEnd.isAfter(
+                  existingStart,
+                );
+
+        if (isOverlap) {
+
+          return true;
+        }
+      }
+
+      return false;
+
+    } catch (e) {
+
+      print(e);
+
+      return true;
+    }
+  }
   /// =========================
   /// SEARCH CIRCLE
   /// =========================
+
   Widget glassCategory({
 
     required IconData icon,
@@ -1454,4 +2398,5 @@ class _HomeContentState
       ),
     );
   }
+
 }
