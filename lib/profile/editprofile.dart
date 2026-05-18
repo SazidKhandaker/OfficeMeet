@@ -717,7 +717,9 @@ class _EditProfilePageState
                     child: DropdownButton<String>(
 
                       value:
-                      selectedDepartment,
+                      departments.contains(selectedDepartment)
+                          ? selectedDepartment
+                          : null,
 
                       dropdownColor:
                       const Color(0xFF111827),

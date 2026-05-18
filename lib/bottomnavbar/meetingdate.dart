@@ -359,7 +359,7 @@ class _MeetingBookingPageState
 
       "fullName":
       fullName,
-
+      "bookedBy": fullName,
       "department":
       department,
 
@@ -389,6 +389,7 @@ class _MeetingBookingPageState
       "createdAt":
       FieldValue
           .serverTimestamp(),
+
     });
 
     setState(() {
@@ -410,6 +411,7 @@ class _MeetingBookingPageState
         ),
       ),
     );
+    print(fullName);
   }
 
   /// =========================

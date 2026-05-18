@@ -40,58 +40,46 @@ class _CalendarPageState
   /// =========================
   /// LOAD MEETING EVENTS
   /// =========================
-  Future<void> loadMeetingEvents()
-  async {
+  void loadMeetingEvents() {
 
-    final snapshot =
-    await FirebaseFirestore
+    FirebaseFirestore
         .instance
         .collection("meetings")
-        .get();
+        .snapshots()
+        .listen((snapshot) {
 
-    Map<DateTime, List<dynamic>>
-    tempEvents = {};
+      Map<DateTime, List<dynamic>> tempEvents = {};
 
-    for (var doc in snapshot.docs) {
+      for (var doc in snapshot.docs) {
 
-      final dateString =
-      doc["meetingDate"];
+        final dateString = doc["meetingDate"];
 
-      final date =
-      DateTime.parse(
-        dateString,
-      );
+        final date = DateTime.parse(dateString);
 
-      final normalizedDate =
-      DateTime.utc(
+        final normalizedDate = DateTime.utc(
+          date.year,
+          date.month,
+          date.day,
+        );
 
-        date.year,
-        date.month,
-        date.day,
-      );
+        if (tempEvents[normalizedDate] == null) {
 
-      if (tempEvents[
-      normalizedDate
-      ] == null) {
+          tempEvents[normalizedDate] = [];
+        }
 
-        tempEvents[
-        normalizedDate
-        ] = [];
+        tempEvents[normalizedDate]!
+            .add(doc.data());
       }
 
-      tempEvents[
-      normalizedDate
-      ]!
-          .add(doc.data());
-    }
+      if (mounted) {
 
-    setState(() {
+        setState(() {
 
-      meetingEvents =
-          tempEvents;
+          meetingEvents = tempEvents;
+        });
+      }
     });
   }
-
   /// =========================
   /// GET MEETINGS
   /// =========================
@@ -122,6 +110,10 @@ class _CalendarPageState
 
         "title":
         doc["department"],
+        "bookedBy":
+        doc.data().containsKey("bookedBy")
+            ? doc["bookedBy"]
+            : "",
 
         "time":
         "${doc["startTime"]} - ${doc["endTime"]}",
@@ -425,7 +417,65 @@ class _CalendarPageState
                           ] ??
                               [];
                         },
+                        calendarBuilders: CalendarBuilders(
 
+                          markerBuilder: (context, day, events) {
+
+                            if (events.isEmpty) {
+                              return const SizedBox();
+                            }
+
+                            return Positioned(
+
+                              bottom: 1,
+
+                              child: Column(
+
+                                children: [
+
+                                  /// MULTIPLE RED DOTS
+                                  Row(
+
+                                    mainAxisSize: MainAxisSize.min,
+
+                                    children: events.take(3).map((e) {
+
+                                      return Container(
+
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 1,
+                                        ),
+
+                                        width: 5,
+                                        height: 5,
+
+                                        decoration: const BoxDecoration(
+
+                                          color: Colors.redAccent,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+
+                                  const SizedBox(height: 2),
+
+                                  /// TOTAL MEETING COUNT
+                                  Text(
+
+                                    "${events.length} Meeting",
+
+                                    style: const TextStyle(
+
+                                      color: Colors.white70,
+                                      fontSize: 8,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                         headerStyle:
                         const HeaderStyle(
 
@@ -534,15 +584,7 @@ class _CalendarPageState
                             BoxShape.circle,
                           ),
 
-                          markerDecoration:
-                          const BoxDecoration(
 
-                            color:
-                            Colors.redAccent,
-
-                            shape:
-                            BoxShape.circle,
-                          ),
 
                           markersMaxCount:
                           10,
@@ -600,11 +642,41 @@ class _CalendarPageState
                         if (!snapshot
                             .hasData) {
 
-                          return const Center(
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
 
-                            child:
-                            CircularProgressIndicator(),
-                          );
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (snapshot.hasError) {
+
+                            return const Center(
+
+                              child: Text(
+
+                                "Something went wrong",
+
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (!snapshot.hasData) {
+
+                            return const SizedBox();
+                          }
                         }
 
                         final selectedMeetings =
@@ -683,20 +755,19 @@ class _CalendarPageState
                                   bottom: 18,
                                 ),
 
-                                child:
-                                meetingCard(
+                                child:meetingCard(
 
                                   width,
 
-                                  meeting[
-                                  "title"],
+                                  meeting["title"],
 
-                                  meeting[
-                                  "time"],
+                                  meeting["time"],
 
-                                  meeting[
-                                  "members"],
-                                ),
+                                  meeting["members"],
+
+                                  meeting["bookedBy"] ?? "",
+                                )
+
                               );
                             },
                           ).toList(),
@@ -730,6 +801,7 @@ class _CalendarPageState
       String time,
 
       String members,
+      String bookedBy,
       ) {
 
     return Container(
@@ -882,6 +954,21 @@ class _CalendarPageState
 
                     fontSize:
                     width * 0.033,
+                  ),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+
+                Text(
+
+                  "Booked By: $bookedBy",
+
+                  style: TextStyle(
+
+                    color: Colors.white60,
+
+                    fontSize: width * 0.030,
                   ),
                 ),
               ],
