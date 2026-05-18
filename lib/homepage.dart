@@ -1765,32 +1765,6 @@ class _HomeContentState
                           /// =========================
                           /// START & END VALIDATION
                           /// =========================
-                          if (
-
-                          startTime.hour == endTime.hour &&
-
-                              startTime.minute == endTime.minute
-
-                          ) {
-
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(
-
-                              const SnackBar(
-
-                                backgroundColor:
-                                Colors.red,
-
-                                content: Text(
-
-                                  "Start & End time can't be same",
-                                ),
-                              ),
-                            );
-
-                            return;
-                          }
                           final startMinutes =
 
                               startTime.hour * 60 +
@@ -1840,7 +1814,9 @@ class _HomeContentState
                             end:
                             endTime,
                           );
+
                           print(hasConflict);
+
                           if (hasConflict) {
 
                             ScaffoldMessenger.of(
@@ -1863,6 +1839,29 @@ class _HomeContentState
                           }
 
                           /// =========================
+                          /// DATETIME
+                          /// =========================
+                          final startDateTime = DateTime(
+
+                            selectedDate.year,
+                            selectedDate.month,
+                            selectedDate.day,
+
+                            startTime.hour,
+                            startTime.minute,
+                          );
+
+                          final endDateTime = DateTime(
+
+                            selectedDate.year,
+                            selectedDate.month,
+                            selectedDate.day,
+
+                            endTime.hour,
+                            endTime.minute,
+                          );
+
+                          /// =========================
                           /// UPDATE FIREBASE
                           /// =========================
                           await FirebaseFirestore
@@ -1873,9 +1872,9 @@ class _HomeContentState
 
                             "meetingDate":
 
-                            "${selectedDate.year.toString().padLeft(4, '0')}-"
-                                "${selectedDate.month.toString().padLeft(2, '0')}-"
-                                "${selectedDate.day.toString().padLeft(2, '0')}",
+                            DateFormat(
+                              "yyyy-MM-dd",
+                            ).format(selectedDate),
 
                             "startTime":
                             startTime.format(
@@ -1887,11 +1886,18 @@ class _HomeContentState
                               context,
                             ),
 
+                            "startDateTime":
+                            startDateTime,
+
+                            "endDateTime":
+                            endDateTime,
+
                             "members":
                             membersController.text,
                           });
 
-                          /// CLOSE DIALOG
+                          print("UPDATED SUCCESS");
+
                           if (mounted) {
 
                             Navigator.pop(
@@ -2201,6 +2207,9 @@ class _HomeContentState
       ),
     );
   }
+  /// =========================
+  /// CHECK CONFLICT
+  /// =========================
   Future<bool> checkConflict({
 
     required String meetingId,
@@ -2213,22 +2222,6 @@ class _HomeContentState
   }) async {
 
     try {
-
-      final selectedDate =
-
-          "${date.year.toString().padLeft(4, '0')}-"
-          "${date.month.toString().padLeft(2, '0')}-"
-          "${date.day.toString().padLeft(2, '0')}";
-
-      final snapshot =
-      await FirebaseFirestore
-          .instance
-          .collection("meetings")
-          .where(
-        "meetingDate",
-        isEqualTo: selectedDate,
-      )
-          .get();
 
       /// =========================
       /// NEW START & END
@@ -2253,40 +2246,108 @@ class _HomeContentState
         end.minute,
       );
 
+      /// =========================
+      /// GET SAME DATE MEETINGS
+      /// =========================
+      final snapshot =
+      await FirebaseFirestore
+          .instance
+          .collection("meetings")
+          .where(
+
+        "meetingDate",
+
+        isEqualTo:
+        DateFormat(
+          "yyyy-MM-dd",
+        ).format(date),
+      )
+          .get();
+
       for (final doc in snapshot.docs) {
 
-        /// SKIP CURRENT
+        /// =========================
+        /// SKIP CURRENT MEETING
+        /// =========================
         if (doc.id == meetingId) {
           continue;
         }
 
-        final existingStart =
+        DateTime existingStart;
 
-        convertToDateTime(
+        DateTime existingEnd;
 
-          time:
-          doc["startTime"],
+        /// =========================
+        /// NEW TIMESTAMP FORMAT
+        /// =========================
+        if (
 
-          date:
-          date,
-        );
+        doc.data().containsKey(
+          "startDateTime",
+        )
 
-        final existingEnd =
+            &&
 
-        convertToDateTime(
+            doc.data().containsKey(
+              "endDateTime",
+            )
 
-          time:
-          doc["endTime"],
+        ) {
 
-          date:
-          date,
-        );
+          existingStart =
+
+              (doc["startDateTime"]
+              as Timestamp)
+                  .toDate();
+
+          existingEnd =
+
+              (doc["endDateTime"]
+              as Timestamp)
+                  .toDate();
+
+        }
+
+        /// =========================
+        /// OLD STRING FORMAT
+        /// =========================
+        else {
+
+          final startParsed =
+          DateFormat.jm().parse(
+            doc["startTime"],
+          );
+
+          final endParsed =
+          DateFormat.jm().parse(
+            doc["endTime"],
+          );
+
+          existingStart = DateTime(
+
+            date.year,
+            date.month,
+            date.day,
+
+            startParsed.hour,
+            startParsed.minute,
+          );
+
+          existingEnd = DateTime(
+
+            date.year,
+            date.month,
+            date.day,
+
+            endParsed.hour,
+            endParsed.minute,
+          );
+        }
 
         /// =========================
         /// OVERLAP CHECK
         /// =========================
-
-        final isOverlap =
+        final overlap =
 
             newStart.isBefore(
               existingEnd,
@@ -2298,7 +2359,7 @@ class _HomeContentState
                   existingStart,
                 );
 
-        if (isOverlap) {
+        if (overlap) {
 
           return true;
         }
