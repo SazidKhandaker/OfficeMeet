@@ -1169,6 +1169,77 @@ class _HomeContentState
                                       .start,
 
                                   children: [
+                                    /// =========================
+                                    /// USER INFO
+                                    /// =========================
+                                    Row(
+                                      children: [
+
+                                        Text(
+
+                                          userName,
+
+                                          maxLines: 1,
+
+                                          overflow:
+                                          TextOverflow.ellipsis,
+
+                                          style: TextStyle(
+
+                                            color:
+                                            Colors.white70,
+
+                                            fontWeight:
+                                            FontWeight.w600,
+
+                                            fontSize:
+                                            width * 0.038,
+                                          ),
+                                        ),
+
+                                       SizedBox(width: width* 0.02,),
+
+                                        CircleAvatar(
+
+                                          radius:
+                                          width * 0.042,
+
+                                          backgroundColor:
+                                          Colors.white
+                                              .withOpacity(
+                                            0.12,
+                                          ),
+
+                                          backgroundImage:
+
+                                          profileImage.isNotEmpty
+
+                                              ? NetworkImage(
+                                            profileImage,
+                                          )
+
+                                              : null,
+
+                                          child:
+
+                                          profileImage.isEmpty
+
+                                              ? Icon(
+
+                                            Icons.person,
+
+                                            color:
+                                            Colors.white,
+
+                                            size:
+                                            width * 0.04,
+                                          )
+
+                                              : null,
+                                        ),
+                                      ],
+                                    ),
+
 
                                     Text(
 
