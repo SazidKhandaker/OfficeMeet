@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:office_meet/API/upload_image.dart'
     show CloudinaryService;
+import 'package:office_meet/Security%20and%20privacy/settingpage.dart' show SettingsPage;
 
 class EditProfilePage
     extends StatefulWidget {
@@ -368,7 +369,19 @@ class _EditProfilePageState
 
                       Icons.settings,
 
-                          () {},
+                          () {
+                            Navigator.push(
+
+                              context,
+
+                              MaterialPageRoute(
+
+                                builder: (context) =>
+
+                                const SettingsPage(),
+                              ),
+                            );
+                          },
                     ),
                   ],
                 ),

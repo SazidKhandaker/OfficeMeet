@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:office_meet/bottomnavbar/Calander.dart' show CalendarPage;
 import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
 import 'package:office_meet/bottomnavbar/profile.dart' show ProfilePage;
-
+import 'package:office_meet/bottomnavbar/meetingdate.dart' show MeetingBookingPage;
 
 
 class HomePage extends StatefulWidget {
@@ -35,7 +35,7 @@ class _HomePageState
 
     const CalendarPage(),
 
-    const MeetingPage(),
+    const MeetingBookingPage(),
 
     const ProfilePage(),
   ];

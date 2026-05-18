@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -23,6 +23,68 @@ class _SettingsPageState
   bool workspaceAlert = true;
 
   bool securityAlert = true;
+  Future<void> loadSettings() async {
+
+    final prefs =
+    await SharedPreferences.getInstance();
+
+    setState(() {
+
+      darkMode =
+          prefs.getBool("darkMode") ?? true;
+
+      meetingNotification =
+          prefs.getBool(
+            "meetingNotification",
+          ) ?? true;
+
+      workspaceAlert =
+          prefs.getBool(
+            "workspaceAlert",
+          ) ?? true;
+
+      securityAlert =
+          prefs.getBool(
+            "securityAlert",
+          ) ?? true;
+    });
+  }
+
+  /// =========================
+  /// SAVE SETTINGS
+  /// =========================
+  Future<void> saveSettings() async {
+
+    final prefs =
+    await SharedPreferences.getInstance();
+
+    await prefs.setBool(
+      "darkMode",
+      darkMode,
+    );
+
+    await prefs.setBool(
+      "meetingNotification",
+      meetingNotification,
+    );
+
+    await prefs.setBool(
+      "workspaceAlert",
+      workspaceAlert,
+    );
+
+    await prefs.setBool(
+      "securityAlert",
+      securityAlert,
+    );
+  }
+  @override
+  void initState() {
+
+    super.initState();
+
+    loadSettings();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +98,9 @@ class _SettingsPageState
     return Scaffold(
 
       backgroundColor:
-      const Color(0xFF0B0618),
+      darkMode ? const Color(0xFF0B0618)
+
+        : Colors.white,
 
       body: SafeArea(
 
@@ -134,7 +198,12 @@ class _SettingsPageState
                           style: TextStyle(
 
                             color:
-                            Colors.white,
+
+                            darkMode
+
+                                ? Colors.white
+
+                                : Colors.black,
 
                             fontWeight:
                             FontWeight.bold,
@@ -215,13 +284,14 @@ class _SettingsPageState
                       value:
                       darkMode,
 
-                      onChanged: (value) {
+                      onChanged: (value) async {
 
                         setState(() {
 
                           darkMode =
                               value;
                         });
+                        await saveSettings();
                       },
                     ),
 
@@ -508,7 +578,11 @@ class _SettingsPageState
                   Icons.settings,
 
                   color:
-                  Colors.white,
+                  darkMode
+
+                      ? Colors.white
+
+                      : Colors.black,
 
                   size:
                   width * 0.11,
@@ -527,7 +601,11 @@ class _SettingsPageState
                 style: TextStyle(
 
                   color:
-                  Colors.white,
+                  darkMode
+
+                      ? Colors.white
+
+                      : Colors.black,
 
                   fontWeight:
                   FontWeight.bold,
@@ -551,8 +629,8 @@ class _SettingsPageState
 
                 style: TextStyle(
 
-                  color:
-                  Colors.white70,
+                  color:darkMode?
+                  Colors.white70:Colors.black,
 
                   fontSize:
                   width * 0.035,
@@ -580,7 +658,11 @@ class _SettingsPageState
       style: TextStyle(
 
         color:
-        Colors.white,
+        darkMode
+
+            ? Colors.white
+
+            : Colors.black,
 
         fontWeight:
         FontWeight.bold,
@@ -642,18 +724,18 @@ class _SettingsPageState
               28,
             ),
 
-            color:
+            color:darkMode?
             Colors.white
                 .withOpacity(
               0.08,
-            ),
+            ): Colors.black,
 
             border: Border.all(
 
-              color:
+              color:darkMode?
               color.withOpacity(
                 0.25,
-              ),
+              ):Colors.black,
             ),
           ),
 
@@ -810,11 +892,11 @@ class _SettingsPageState
                 28,
               ),
 
-              color:
+              color:darkMode?
               Colors.white
                   .withOpacity(
                 0.08,
-              ),
+              ):Colors.black,
 
               border: Border.all(
 
@@ -878,7 +960,11 @@ class _SettingsPageState
                         style: TextStyle(
 
                           color:
-                          Colors.white,
+                          darkMode
+
+                              ? Colors.white
+
+                              : Colors.white,
 
                           fontWeight:
                           FontWeight.bold,
@@ -899,7 +985,11 @@ class _SettingsPageState
                         style: TextStyle(
 
                           color:
-                          Colors.white60,
+                          darkMode
+
+                              ? Colors.white
+
+                              : Colors.white,
 
                           fontSize:
                           width * 0.031,
@@ -964,11 +1054,11 @@ class _SettingsPageState
                 18,
               ),
 
-              color:
+              color:darkMode?
               Colors.white
                   .withOpacity(
                 0.08,
-              ),
+              ):Colors.black,
             ),
 
             child: Icon(
