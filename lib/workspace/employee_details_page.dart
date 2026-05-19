@@ -426,8 +426,12 @@ class EmployeeDetailsPage
 
                                   child: Row(
 
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+
                                     children: [
 
+                                      /// EMAIL ICON
                                       CircleAvatar(
 
                                         radius:
@@ -453,16 +457,16 @@ class EmployeeDetailsPage
 
                                       SizedBox(
                                         width:
-                                        width * 0.04,
+                                        width * 0.035,
                                       ),
 
+                                      /// EMAIL TEXT
                                       Expanded(
 
                                         child: Column(
 
                                           crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .start,
+                                          CrossAxisAlignment.start,
 
                                           children: [
 
@@ -481,16 +485,14 @@ class EmployeeDetailsPage
                                             ),
 
                                             SizedBox(
-                                              height: 4,
+                                              height: 5,
                                             ),
 
-                                            Text(
+                                            SelectableText(
 
                                               email,
 
-                                              overflow:
-                                              TextOverflow
-                                                  .ellipsis,
+                                              maxLines: 2,
 
                                               style: TextStyle(
 
@@ -501,22 +503,23 @@ class EmployeeDetailsPage
                                                 FontWeight.w600,
 
                                                 fontSize:
-                                                width * 0.037,
+                                                width * 0.036,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
 
+                                      SizedBox(
+                                        width:
+                                        width * 0.03,
+                                      ),
+
+                                      /// SEND BUTTON
                                       GestureDetector(
 
                                         onTap: () async {
 
-                                          final uri =
-                                          Uri.parse(
-
-                                            "mailto:$email",
-                                          );
                                           try {
 
                                             final Uri emailUri = Uri(
@@ -549,8 +552,6 @@ class EmployeeDetailsPage
                                               ),
                                             );
                                           }
-
-
                                         },
 
                                         child: Container(
