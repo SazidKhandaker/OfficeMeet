@@ -8,6 +8,7 @@ import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
 import 'package:office_meet/bottomnavbar/profile.dart' show ProfilePage;
 import 'package:office_meet/bottomnavbar/meetingdate.dart' show MeetingBookingPage;
 import 'package:office_meet/department_meetings_page.dart' show DepartmentMeetingsPage;
+import 'package:office_meet/profile/drawerpage.dart' show AppDrawer;
 import 'package:office_meet/workspace/employee_details_page.dart' show EmployeeDetailsPage;
 
 
@@ -28,14 +29,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState
     extends State<HomePage> {
+  String profileImage = "";
   @override
   void initState() {
+    getUserData();
 
     super.initState();
 
     currentIndex =
         widget.selectedIndex;
   }
+
 
   final user =
       FirebaseAuth.instance.currentUser;
@@ -56,7 +60,43 @@ class _HomePageState
 
     const ProfilePage(),
   ];
+  Future<void> getUserData() async {
 
+    try {
+
+      final uid =
+          FirebaseAuth
+              .instance
+              .currentUser!
+              .uid;
+
+      FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(uid)
+          .snapshots()
+          .listen((userData) {
+
+        if (userData.exists) {
+
+          setState(() {
+
+            userName =
+                userData["fullName"]
+                    ?? "User";
+
+            profileImage =
+                userData["profileImage"]
+                    ?? "";
+          });
+        }
+      });
+
+    } catch (e) {
+
+      print(e);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     /// =========================
@@ -539,7 +579,12 @@ class _HomePageState
 
     return SafeArea(
       child: Scaffold(
-      
+        drawer: AppDrawer(
+
+          userName: userName,
+
+          profileImage: profileImage,
+        ),
         backgroundColor:
         const Color(0xFF020617),
       
@@ -919,13 +964,27 @@ class _HomeContentState
 
                 children: [
 
-                  glassCircleButton(
+                  Builder(
 
-                    icon:
-                    Icons.menu_rounded,
+                    builder: (context) {
 
-                    size:
-                    width * 0.14,
+                      return GestureDetector(
+
+                        onTap: () {
+
+                          Scaffold.of(context).openDrawer();
+                        },
+
+                        child: glassCircleButton(
+
+                          icon:
+                          Icons.menu_rounded,
+
+                          size:
+                          width * 0.14,
+                        ),
+                      );
+                    },
                   ),
 
                   Row(
