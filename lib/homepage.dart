@@ -58,6 +58,477 @@ class _HomePageState
 
   @override
   Widget build(BuildContext context) {
+    /// =========================
+    /// WORKSPACE SEARCH
+    /// =========================
+    void showWorkspaceSearch() {
+
+      final searchController =
+      TextEditingController();
+
+      showModalBottomSheet(
+
+        context: context,
+
+        isScrollControlled: true,
+
+        backgroundColor:
+        Colors.transparent,
+
+        builder: (context) {
+
+          final width =
+              MediaQuery.of(context)
+                  .size
+                  .width;
+
+          final height =
+              MediaQuery.of(context)
+                  .size
+                  .height;
+
+          return StatefulBuilder(
+
+            builder:
+                (context, setState) {
+
+              return Container(
+
+                height:
+                height * 0.85,
+
+                padding:
+                EdgeInsets.all(
+                  width * 0.05,
+                ),
+
+                decoration:
+                const BoxDecoration(
+
+                  color:
+                  Color(0xFF090014),
+
+                  borderRadius:
+                  BorderRadius.vertical(
+
+                    top:
+                    Radius.circular(
+                      35,
+                    ),
+                  ),
+                ),
+
+                child: Column(
+
+                  children: [
+
+                    /// TOP BAR
+                    Container(
+
+                      width:
+                      width * 0.18,
+
+                      height: 5,
+
+                      decoration:
+                      BoxDecoration(
+
+                        borderRadius:
+                        BorderRadius.circular(
+                          50,
+                        ),
+
+                        color:
+                        Colors.white24,
+                      ),
+                    ),
+
+                    SizedBox(
+                      height:
+                      height * 0.03,
+                    ),
+
+                    /// SEARCH FIELD
+                    TextField(
+
+                      controller:
+                      searchController,
+
+                      onChanged: (_) {
+
+                        setState(() {});
+                      },
+
+                      style:
+                      const TextStyle(
+
+                        color:
+                        Colors.white,
+                      ),
+
+                      decoration:
+                      InputDecoration(
+
+                        hintText:
+
+                        "Search employees, meetings, departments...",
+
+                        hintStyle:
+                        const TextStyle(
+
+                          color:
+                          Colors.white54,
+                        ),
+
+                        prefixIcon:
+                        const Icon(
+
+                          Icons.search,
+
+                          color:
+                          Colors.white70,
+                        ),
+
+                        filled: true,
+
+                        fillColor:
+                        Colors.white
+                            .withOpacity(
+                          0.06,
+                        ),
+
+                        border:
+                        OutlineInputBorder(
+
+                          borderRadius:
+                          BorderRadius.circular(
+                            22,
+                          ),
+
+                          borderSide:
+                          BorderSide.none,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height:
+                      height * 0.03,
+                    ),
+
+                    /// RESULTS
+                    Expanded(
+
+                      child:
+                      StreamBuilder(
+
+                        stream:
+                        FirebaseFirestore
+                            .instance
+                            .collection(
+                          "users",
+                        )
+                            .snapshots(),
+
+                        builder:
+                            (context, snapshot) {
+
+                          if (!snapshot
+                              .hasData) {
+
+                            return const Center(
+
+                              child:
+                              CircularProgressIndicator(),
+                            );
+                          }
+
+                          final users =
+                              snapshot.data!
+                                  .docs;
+
+                          final query =
+
+                          searchController
+                              .text
+                              .toLowerCase();
+
+                          final filtered =
+
+                          users.where((doc) {
+
+                            final data =
+                            doc.data();
+
+                            final name =
+
+                            data["fullName"]
+                                .toString()
+                                .toLowerCase();
+
+                            final dept =
+
+                            data["department"]
+                                .toString()
+                                .toLowerCase();
+
+                            final designation =
+
+                            data["designation"]
+                                .toString()
+                                .toLowerCase();
+
+                            return
+
+                              name.contains(
+                                query,
+                              )
+
+                                  ||
+
+                                  dept.contains(
+                                    query,
+                                  )
+
+                                  ||
+
+                                  designation.contains(
+                                    query,
+                                  );
+                          }).toList();
+
+                          if (filtered.isEmpty) {
+
+                            return const Center(
+
+                              child: Text(
+
+                                "No Results Found",
+
+                                style: TextStyle(
+
+                                  color:
+                                  Colors.white70,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return ListView.builder(
+
+                            physics:
+                            const BouncingScrollPhysics(),
+
+                            itemCount:
+                            filtered.length,
+
+                            itemBuilder:
+                                (context, index) {
+
+                              final data =
+                              filtered[index]
+                                  .data();
+
+                              final image =
+
+                                  data["profileImage"]
+                                      ?? "";
+
+                              return Container(
+
+                                margin:
+                                EdgeInsets.only(
+
+                                  bottom:
+                                  height * 0.02,
+                                ),
+
+                                padding:
+                                EdgeInsets.all(
+                                  width * 0.04,
+                                ),
+
+                                decoration:
+                                BoxDecoration(
+
+                                  borderRadius:
+                                  BorderRadius.circular(
+                                    24,
+                                  ),
+
+                                  color:
+                                  Colors.white
+                                      .withOpacity(
+                                    0.05,
+                                  ),
+
+                                  border:
+                                  Border.all(
+
+                                    color:
+                                    Colors.white
+                                        .withOpacity(
+                                      0.06,
+                                    ),
+                                  ),
+                                ),
+
+                                child: Row(
+
+                                  children: [
+
+                                    /// AVATAR
+                                    CircleAvatar(
+
+                                      radius:
+                                      width * 0.07,
+
+                                      backgroundColor:
+                                      Colors.white
+                                          .withOpacity(
+                                        0.08,
+                                      ),
+
+                                      backgroundImage:
+
+                                      image
+                                          .toString()
+                                          .isNotEmpty
+
+                                          ? NetworkImage(
+                                        image,
+                                      )
+
+                                          : null,
+
+                                      child:
+
+                                      image
+                                          .toString()
+                                          .isEmpty
+
+                                          ? Icon(
+
+                                        Icons.person,
+
+                                        color:
+                                        Colors.white,
+
+                                        size:
+                                        width * 0.06,
+                                      )
+
+                                          : null,
+                                    ),
+
+                                    SizedBox(
+                                      width:
+                                      width * 0.04,
+                                    ),
+
+                                    /// INFO
+                                    Expanded(
+
+                                      child: Column(
+
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment
+                                            .start,
+
+                                        children: [
+
+                                          Text(
+
+                                            data["fullName"]
+                                                ?? "",
+
+                                            style:
+                                            TextStyle(
+
+                                              color:
+                                              Colors.white,
+
+                                              fontWeight:
+                                              FontWeight.bold,
+
+                                              fontSize:
+                                              width * 0.042,
+                                            ),
+                                          ),
+
+                                          SizedBox(
+                                            height: 4,
+                                          ),
+
+                                          Text(
+
+                                            data["designation"]
+                                                ?? "",
+
+                                            style:
+                                            TextStyle(
+
+                                              color:
+                                              Colors.white70,
+
+                                              fontSize:
+                                              width * 0.033,
+                                            ),
+                                          ),
+
+                                          SizedBox(
+                                            height: 4,
+                                          ),
+
+                                          Text(
+
+                                            data["department"]
+                                                ?? "",
+
+                                            style:
+                                            TextStyle(
+
+                                              color:
+                                              Colors.cyanAccent,
+
+                                              fontWeight:
+                                              FontWeight.w600,
+
+                                              fontSize:
+                                              width * 0.032,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    /// ICON
+                                    Icon(
+
+                                      Icons.arrow_forward_ios,
+
+                                      color:
+                                      Colors.white54,
+
+                                      size:
+                                      width * 0.04,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+    }
 
     final width =
         MediaQuery.of(context).size.width;
@@ -640,13 +1111,19 @@ class _HomeContentState
                 child: Row(
                   children: [
 
-                    glassCategory(
+                    GestureDetector(
+                      onTap: () {
 
-                      icon:
-                      Icons.search,
+                        showWorkspaceSearch();
+                      },
+                      child: glassCategory(
 
-                      width:
-                      width,
+                        icon:
+                        Icons.search,
+
+                        width:
+                        width,
+                      ),
                     ),
 
                     SizedBox(
@@ -2661,5 +3138,475 @@ class _HomeContentState
       ),
     );
   }
+  /// =========================
+  /// WORKSPACE SEARCH
+  /// =========================
+  void showWorkspaceSearch() {
 
+    final searchController =
+    TextEditingController();
+
+    showModalBottomSheet(
+
+      context: context,
+
+      isScrollControlled: true,
+
+      backgroundColor:
+      Colors.transparent,
+
+      builder: (context) {
+
+        final width =
+            MediaQuery.of(context)
+                .size
+                .width;
+
+        final height =
+            MediaQuery.of(context)
+                .size
+                .height;
+
+        return StatefulBuilder(
+
+          builder:
+              (context, setState) {
+
+            return Container(
+
+              height:
+              height * 0.85,
+
+              padding:
+              EdgeInsets.all(
+                width * 0.05,
+              ),
+
+              decoration:
+              const BoxDecoration(
+
+                color:
+                Color(0xFF090014),
+
+                borderRadius:
+                BorderRadius.vertical(
+
+                  top:
+                  Radius.circular(
+                    35,
+                  ),
+                ),
+              ),
+
+              child: Column(
+
+                children: [
+
+                  /// TOP BAR
+                  Container(
+
+                    width:
+                    width * 0.18,
+
+                    height: 5,
+
+                    decoration:
+                    BoxDecoration(
+
+                      borderRadius:
+                      BorderRadius.circular(
+                        50,
+                      ),
+
+                      color:
+                      Colors.white24,
+                    ),
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.03,
+                  ),
+
+                  /// SEARCH FIELD
+                  TextField(
+
+                    controller:
+                    searchController,
+
+                    onChanged: (_) {
+
+                      setState(() {});
+                    },
+
+                    style:
+                    const TextStyle(
+
+                      color:
+                      Colors.white,
+                    ),
+
+                    decoration:
+                    InputDecoration(
+
+                      hintText:
+
+                      "Search employees, meetings, departments...",
+
+                      hintStyle:
+                      const TextStyle(
+
+                        color:
+                        Colors.white54,
+                      ),
+
+                      prefixIcon:
+                      const Icon(
+
+                        Icons.search,
+
+                        color:
+                        Colors.white70,
+                      ),
+
+                      filled: true,
+
+                      fillColor:
+                      Colors.white
+                          .withOpacity(
+                        0.06,
+                      ),
+
+                      border:
+                      OutlineInputBorder(
+
+                        borderRadius:
+                        BorderRadius.circular(
+                          22,
+                        ),
+
+                        borderSide:
+                        BorderSide.none,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.03,
+                  ),
+
+                  /// RESULTS
+                  Expanded(
+
+                    child:
+                    StreamBuilder(
+
+                      stream:
+                      FirebaseFirestore
+                          .instance
+                          .collection(
+                        "users",
+                      )
+                          .snapshots(),
+
+                      builder:
+                          (context, snapshot) {
+
+                        if (!snapshot
+                            .hasData) {
+
+                          return const Center(
+
+                            child:
+                            CircularProgressIndicator(),
+                          );
+                        }
+
+                        final users =
+                            snapshot.data!
+                                .docs;
+
+                        final query =
+
+                        searchController
+                            .text
+                            .toLowerCase();
+
+                        final filtered =
+
+                        users.where((doc) {
+
+                          final data =
+                          doc.data();
+
+                          final name =
+
+                          data["fullName"]
+                              .toString()
+                              .toLowerCase();
+
+                          final dept =
+
+                          data["department"]
+                              .toString()
+                              .toLowerCase();
+
+                          final designation =
+
+                          data["designation"]
+                              .toString()
+                              .toLowerCase();
+
+                          return
+
+                            name.contains(
+                              query,
+                            )
+
+                                ||
+
+                                dept.contains(
+                                  query,
+                                )
+
+                                ||
+
+                                designation.contains(
+                                  query,
+                                );
+                        }).toList();
+
+                        if (filtered.isEmpty) {
+
+                          return const Center(
+
+                            child: Text(
+
+                              "No Results Found",
+
+                              style: TextStyle(
+
+                                color:
+                                Colors.white70,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+
+                          physics:
+                          const BouncingScrollPhysics(),
+
+                          itemCount:
+                          filtered.length,
+
+                          itemBuilder:
+                              (context, index) {
+
+                            final data =
+                            filtered[index]
+                                .data();
+
+                            final image =
+
+                                data["profileImage"]
+                                    ?? "";
+
+                            return Container(
+
+                              margin:
+                              EdgeInsets.only(
+
+                                bottom:
+                                height * 0.02,
+                              ),
+
+                              padding:
+                              EdgeInsets.all(
+                                width * 0.04,
+                              ),
+
+                              decoration:
+                              BoxDecoration(
+
+                                borderRadius:
+                                BorderRadius.circular(
+                                  24,
+                                ),
+
+                                color:
+                                Colors.white
+                                    .withOpacity(
+                                  0.05,
+                                ),
+
+                                border:
+                                Border.all(
+
+                                  color:
+                                  Colors.white
+                                      .withOpacity(
+                                    0.06,
+                                  ),
+                                ),
+                              ),
+
+                              child: Row(
+
+                                children: [
+
+                                  /// AVATAR
+                                  CircleAvatar(
+
+                                    radius:
+                                    width * 0.07,
+
+                                    backgroundColor:
+                                    Colors.white
+                                        .withOpacity(
+                                      0.08,
+                                    ),
+
+                                    backgroundImage:
+
+                                    image
+                                        .toString()
+                                        .isNotEmpty
+
+                                        ? NetworkImage(
+                                      image,
+                                    )
+
+                                        : null,
+
+                                    child:
+
+                                    image
+                                        .toString()
+                                        .isEmpty
+
+                                        ? Icon(
+
+                                      Icons.person,
+
+                                      color:
+                                      Colors.white,
+
+                                      size:
+                                      width * 0.06,
+                                    )
+
+                                        : null,
+                                  ),
+
+                                  SizedBox(
+                                    width:
+                                    width * 0.04,
+                                  ),
+
+                                  /// INFO
+                                  Expanded(
+
+                                    child: Column(
+
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+
+                                      children: [
+
+                                        Text(
+
+                                          data["fullName"]
+                                              ?? "",
+
+                                          style:
+                                          TextStyle(
+
+                                            color:
+                                            Colors.white,
+
+                                            fontWeight:
+                                            FontWeight.bold,
+
+                                            fontSize:
+                                            width * 0.042,
+                                          ),
+                                        ),
+
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+
+                                        Text(
+
+                                          data["designation"]
+                                              ?? "",
+
+                                          style:
+                                          TextStyle(
+
+                                            color:
+                                            Colors.white70,
+
+                                            fontSize:
+                                            width * 0.033,
+                                          ),
+                                        ),
+
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+
+                                        Text(
+
+                                          data["department"]
+                                              ?? "",
+
+                                          style:
+                                          TextStyle(
+
+                                            color:
+                                            Colors.cyanAccent,
+
+                                            fontWeight:
+                                            FontWeight.w600,
+
+                                            fontSize:
+                                            width * 0.032,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  /// ICON
+                                  Icon(
+
+                                    Icons.arrow_forward_ios,
+
+                                    color:
+                                    Colors.white54,
+
+                                    size:
+                                    width * 0.04,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
