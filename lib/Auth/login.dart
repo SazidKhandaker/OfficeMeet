@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:office_meet/Auth/Singin.dart' show SignUpPage;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:office_meet/homepage.dart' show HomePage;
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -30,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     return SafeArea(
       child: Scaffold(
 
-        backgroundColor: const Color(0xFF020617),
+        backgroundColor:Color(0xFF020617),
 
         body: SafeArea(
 

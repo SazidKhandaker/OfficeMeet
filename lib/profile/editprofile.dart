@@ -9,6 +9,7 @@ import 'package:office_meet/API/upload_image.dart'
     show CloudinaryService;
 import 'package:office_meet/Security%20and%20privacy/settingpage.dart' show SettingsPage;
 
+
 class EditProfilePage
     extends StatefulWidget {
 
@@ -289,7 +290,7 @@ class _EditProfilePageState
     return Scaffold(
 
       backgroundColor:
-      const Color(0xFF070B1A),
+        const Color(0xFF070B1A),
 
       body: isLoading
 

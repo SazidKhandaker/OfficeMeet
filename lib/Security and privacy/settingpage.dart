@@ -1,6 +1,8 @@
 import 'dart:ui';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
 
@@ -16,13 +18,19 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState
     extends State<SettingsPage> {
 
-  bool darkMode = true;
-
   bool meetingNotification = true;
 
-  bool workspaceAlert = true;
+  @override
+  void initState() {
 
-  bool securityAlert = true;
+    super.initState();
+
+    loadSettings();
+  }
+
+  /// =========================
+  /// LOAD SETTINGS
+  /// =========================
   Future<void> loadSettings() async {
 
     final prefs =
@@ -30,23 +38,11 @@ class _SettingsPageState
 
     setState(() {
 
-      darkMode =
-          prefs.getBool("darkMode") ?? true;
-
       meetingNotification =
           prefs.getBool(
             "meetingNotification",
-          ) ?? true;
-
-      workspaceAlert =
-          prefs.getBool(
-            "workspaceAlert",
-          ) ?? true;
-
-      securityAlert =
-          prefs.getBool(
-            "securityAlert",
-          ) ?? true;
+          ) ??
+              true;
     });
   }
 
@@ -59,48 +55,37 @@ class _SettingsPageState
     await SharedPreferences.getInstance();
 
     await prefs.setBool(
-      "darkMode",
-      darkMode,
-    );
 
-    await prefs.setBool(
       "meetingNotification",
+
       meetingNotification,
     );
-
-    await prefs.setBool(
-      "workspaceAlert",
-      workspaceAlert,
-    );
-
-    await prefs.setBool(
-      "securityAlert",
-      securityAlert,
-    );
-  }
-  @override
-  void initState() {
-
-    super.initState();
-
-    loadSettings();
   }
 
   @override
   Widget build(BuildContext context) {
 
     final width =
-        MediaQuery.of(context).size.width;
+        MediaQuery.of(context)
+            .size
+            .width;
 
     final height =
-        MediaQuery.of(context).size.height;
+        MediaQuery.of(context)
+            .size
+            .height;
+
+    final currentUser =
+        FirebaseAuth
+            .instance
+            .currentUser;
 
     return Scaffold(
 
       backgroundColor:
-      darkMode ? const Color(0xFF0B0618)
-
-        : Colors.white,
+      const Color(
+        0xFF0B0618,
+      ),
 
       body: SafeArea(
 
@@ -141,338 +126,524 @@ class _SettingsPageState
             ),
 
             /// =========================
-            /// MAIN BODY
+            /// BODY
             /// =========================
             SingleChildScrollView(
 
               physics:
               const BouncingScrollPhysics(),
 
-              child: Padding(
+              padding:
+              EdgeInsets.symmetric(
 
-                padding:
-                EdgeInsets.symmetric(
+                horizontal:
+                width * 0.05,
 
-                  horizontal:
-                  width * 0.05,
+                vertical:
+                height * 0.02,
+              ),
 
-                  vertical:
-                  height * 0.02,
-                ),
+              child: Column(
 
-                child: Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
 
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                children: [
 
-                  children: [
+                  /// =========================
+                  /// TOP BAR
+                  /// =========================
+                  Row(
 
-                    /// =========================
-                    /// TOP BAR
-                    /// =========================
-                    Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment
+                        .spaceBetween,
 
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
+                    children: [
 
-                      children: [
+                      topButton(
 
-                        topButton(
+                        icon:
+                        Icons
+                            .arrow_back_ios_new,
 
-                          Icons
-                              .arrow_back_ios_new,
+                        onTap: () {
 
-                              () {
-
-                            Navigator.pop(
-                              context,
-                            );
-                          },
-                        ),
-
-                        Text(
-
-                          "Settings",
-
-                          style: TextStyle(
-
-                            color:
-
-                            darkMode
-
-                                ? Colors.white
-
-                                : Colors.black,
-
-                            fontWeight:
-                            FontWeight.bold,
-
-                            fontSize:
-                            width * 0.06,
-                          ),
-                        ),
-
-                        topButton(
-
-                          Icons.settings,
-
-                              () {},
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.045,
-                    ),
-
-                    /// =========================
-                    /// HEADER CARD
-                    /// =========================
-                    premiumHeader(
-                      width,
-                      height,
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.04,
-                    ),
-
-                    /// =========================
-                    /// THEME SETTINGS
-                    /// =========================
-                    sectionTitle(
-
-                      width,
-
-                      "Theme Settings",
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.02,
-                    ),
-
-                    settingsSwitchCard(
-
-                      width,
-
-                      icon:
-                      darkMode
-
-                          ? Icons.dark_mode
-
-                          : Icons.light_mode,
-
-                      title:
-                      darkMode
-
-                          ? "Dark Mode"
-
-                          : "Light Mode",
-
-                      subtitle:
-                      "Customize your app appearance.",
-
-                      color:
-                      const Color(
-                        0xFFB026FF,
+                          Navigator.pop(
+                            context,
+                          );
+                        },
                       ),
 
-                      value:
-                      darkMode,
+                      Text(
 
-                      onChanged: (value) async {
+                        "Settings",
 
-                        setState(() {
+                        style: TextStyle(
 
-                          darkMode =
-                              value;
-                        });
-                        await saveSettings();
-                      },
-                    ),
+                          color:
+                          Colors.white,
 
-                    SizedBox(
-                      height:
-                      height * 0.04,
-                    ),
+                          fontWeight:
+                          FontWeight.bold,
 
-                    /// =========================
-                    /// NOTIFICATIONS
-                    /// =========================
-                    sectionTitle(
-
-                      width,
-
-                      "Notification Settings",
-                    ),
-
-                    SizedBox(
-                      height:
-                      height * 0.02,
-                    ),
-
-                    settingsSwitchCard(
-
-                      width,
-
-                      icon:
-                      Icons.notifications_active,
-
-                      title:
-                      "Meeting Notifications",
-
-                      subtitle:
-                      "Receive meeting reminders.",
-
-                      color:
-                      const Color(
-                        0xFF00E5FF,
+                          fontSize:
+                          width * 0.06,
+                        ),
                       ),
 
-                      value:
-                      meetingNotification,
+                      topButton(
 
-                      onChanged: (value) {
+                        icon:
+                        Icons.settings,
 
-                        setState(() {
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
 
-                          meetingNotification =
-                              value;
-                        });
-                      },
+                  SizedBox(
+                    height:
+                    height * 0.04,
+                  ),
+
+                  /// =========================
+                  /// HEADER
+                  /// =========================
+                  premiumHeader(
+                    width,
+                    height,
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.04,
+                  ),
+
+                  /// =========================
+                  /// NOTIFICATION
+                  /// =========================
+                  sectionTitle(
+
+                    width,
+
+                    "Notification Settings",
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.02,
+                  ),
+
+                  settingsSwitchCard(
+
+                    width,
+
+                    icon:
+                    Icons.notifications_active,
+
+                    title:
+                    "Meeting Notifications",
+
+                    subtitle:
+                    "Receive upcoming meeting reminders.",
+
+                    color:
+                    const Color(
+                      0xFF00E5FF,
                     ),
 
-                    SizedBox(
-                      height:
-                      height * 0.02,
-                    ),
+                    value:
+                    meetingNotification,
 
-                    settingsSwitchCard(
+                    onChanged:
+                        (value) async {
 
-                      width,
+                      setState(() {
 
-                      icon:
-                      Icons.workspace_premium,
+                        meetingNotification =
+                            value;
+                      });
 
-                      title:
-                      "Workspace Alerts",
+                      await saveSettings();
+                    },
+                  ),
 
-                      subtitle:
-                      "Workspace updates & alerts.",
+                  SizedBox(
+                    height:
+                    height * 0.04,
+                  ),
 
-                      color:
-                      Colors.greenAccent,
+                  /// =========================
+                  /// ACCOUNT
+                  /// =========================
+                  sectionTitle(
 
-                      value:
-                      workspaceAlert,
+                    width,
 
-                      onChanged: (value) {
+                    "Account & Security",
+                  ),
 
-                        setState(() {
+                  SizedBox(
+                    height:
+                    height * 0.02,
+                  ),
 
-                          workspaceAlert =
-                              value;
-                        });
-                      },
-                    ),
+                  /// EMAIL STATUS
+                  actionCard(
 
-                    SizedBox(
-                      height:
-                      height * 0.02,
-                    ),
+                    width,
 
-                    settingsSwitchCard(
+                    icon:
 
-                      width,
+                    currentUser!
+                        .emailVerified
 
-                      icon:
-                      Icons.security,
+                        ? Icons.verified
 
-                      title:
-                      "Security Alerts",
+                        : Icons.warning_amber_rounded,
 
-                      subtitle:
-                      "Security login notifications.",
+                    title:
+                    "Email Verification",
 
-                      color:
-                      Colors.orangeAccent,
+                    subtitle:
 
-                      value:
-                      securityAlert,
+                    currentUser
+                        .emailVerified
 
-                      onChanged: (value) {
+                        ? "Verified Account"
 
-                        setState(() {
+                        : "Email not verified",
 
-                          securityAlert =
-                              value;
-                        });
-                      },
-                    ),
+                    color:
 
-                    SizedBox(
-                      height:
-                      height * 0.04,
-                    ),
+                    currentUser
+                        .emailVerified
 
-                    /// =========================
-                    /// HELP & SUPPORT
-                    /// =========================
-                    sectionTitle(
+                        ? Colors.greenAccent
 
-                      width,
+                        : Colors.orangeAccent,
 
-                      "Help & Support",
-                    ),
+                    onTap: () async {
 
-                    SizedBox(
-                      height:
-                      height * 0.02,
-                    ),
+                      if (!currentUser
+                          .emailVerified) {
 
-                    actionCard(
+                        await currentUser
+                            .sendEmailVerification();
 
-                      width,
+                        if (context
+                            .mounted) {
 
-                      icon:
-                      Icons.support_agent,
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(
 
-                      title:
-                      "Contact Support",
+                            const SnackBar(
 
-                      subtitle:
-                      "Get help from our support team.",
+                              content: Text(
 
-                      color:
-                      Colors.pinkAccent,
-
-                      onTap: () {
-
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(
-
-                          const SnackBar(
-
-                            content: Text(
-
-                              "Support team coming soon.",
+                                "Verification email sent",
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                          );
+                        }
+                      }
+                    },
+                  ),
 
-                    SizedBox(
-                      height:
-                      height * 0.05,
-                    ),
-                  ],
-                ),
+                  SizedBox(
+                    height:
+                    height * 0.02,
+                  ),
+
+                  /// CHANGE PASSWORD
+                  actionCard(
+
+                    width,
+
+                    icon:
+                    Icons.lock_reset,
+
+                    title:
+                    "Change Password",
+
+                    subtitle:
+                    "Send password reset email.",
+
+                    color:
+                    Colors.cyanAccent,
+
+                    onTap: () async {
+
+                      if (currentUser
+                          .email !=
+                          null) {
+
+                        await FirebaseAuth
+                            .instance
+                            .sendPasswordResetEmail(
+
+                          email:
+                          currentUser.email!,
+                        );
+
+                        if (context
+                            .mounted) {
+
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(
+
+                            const SnackBar(
+
+                              content: Text(
+
+                                "Password reset email sent",
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.02,
+                  ),
+
+                  /// DELETE ACCOUNT
+                  actionCard(
+
+                    width,
+
+                    icon:
+                    Icons.delete_forever,
+
+                    title:
+                    "Delete Account",
+
+                    subtitle:
+                    "Permanently delete your account.",
+
+                    color:
+                    Colors.redAccent,
+
+                    onTap: () {
+
+                      showDialog(
+
+                        context:
+                        context,
+
+                        builder: (_) {
+
+                          return AlertDialog(
+
+                            backgroundColor:
+                            const Color(
+                              0xFF151025,
+                            ),
+
+                            shape:
+                            RoundedRectangleBorder(
+
+                              borderRadius:
+                              BorderRadius.circular(
+                                24,
+                              ),
+                            ),
+
+                            title:
+                            const Text(
+
+                              "Delete Account",
+
+                              style: TextStyle(
+
+                                color:
+                                Colors.white,
+                              ),
+                            ),
+
+                            content:
+                            const Text(
+
+                              "Are you sure you want to permanently delete your account?",
+
+                              style: TextStyle(
+
+                                color:
+                                Colors.white70,
+                              ),
+                            ),
+
+                            actions: [
+
+                              TextButton(
+
+                                onPressed: () {
+
+                                  Navigator.pop(
+                                    context,
+                                  );
+                                },
+
+                                child:
+                                const Text(
+
+                                  "Cancel",
+                                ),
+                              ),
+
+                              TextButton(
+
+                                onPressed:
+                                    () async {
+
+                                  await currentUser
+                                      .delete();
+
+                                  if (context
+                                      .mounted) {
+
+                                    Navigator.pop(
+                                      context,
+                                    );
+                                  }
+                                },
+
+                                child:
+                                const Text(
+
+                                  "Delete",
+
+                                  style: TextStyle(
+
+                                    color:
+                                    Colors.red,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.04,
+                  ),
+
+                  /// =========================
+                  /// WORKSPACE INFO
+                  /// =========================
+                  sectionTitle(
+
+                    width,
+
+                    "Workspace Info",
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.02,
+                  ),
+
+                  infoCard(
+
+                    width,
+
+                    icon:
+                    Icons.devices,
+
+                    title:
+                    "Current Device",
+
+                    subtitle:
+                    "Android Device",
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.02,
+                  ),
+
+                  infoCard(
+
+                    width,
+
+                    icon:
+                    Icons.info_outline,
+
+                    title:
+                    "App Version",
+
+                    subtitle:
+                    "Office Meet v1.0.0",
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.04,
+                  ),
+
+                  /// =========================
+                  /// SUPPORT
+                  /// =========================
+                  sectionTitle(
+
+                    width,
+
+                    "Help & Support",
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.02,
+                  ),
+
+                  actionCard(
+
+                    width,
+
+                    icon:
+                    Icons.support_agent,
+
+                    title:
+                    "Contact Support",
+
+                    subtitle:
+                    "Get help from support team.",
+
+                    color:
+                    Colors.pinkAccent,
+
+                    onTap: () {
+
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(
+
+                        const SnackBar(
+
+                          content: Text(
+
+                            "Support coming soon",
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  SizedBox(
+                    height:
+                    height * 0.06,
+                  ),
+                ],
               ),
             ),
           ],
@@ -496,7 +667,8 @@ class _SettingsPageState
 
       child: BackdropFilter(
 
-        filter: ImageFilter.blur(
+        filter:
+        ImageFilter.blur(
 
           sigmaX: 25,
           sigmaY: 25,
@@ -539,7 +711,8 @@ class _SettingsPageState
               ],
             ),
 
-            border: Border.all(
+            border:
+            Border.all(
 
               color:
               Colors.white
@@ -578,11 +751,7 @@ class _SettingsPageState
                   Icons.settings,
 
                   color:
-                  darkMode
-
-                      ? Colors.white
-
-                      : Colors.black,
+                  Colors.white,
 
                   size:
                   width * 0.11,
@@ -596,22 +765,18 @@ class _SettingsPageState
 
               Text(
 
-                "App Settings",
+                "Workspace Settings",
 
                 style: TextStyle(
 
                   color:
-                  darkMode
-
-                      ? Colors.white
-
-                      : Colors.black,
+                  Colors.white,
 
                   fontWeight:
                   FontWeight.bold,
 
                   fontSize:
-                  width * 0.07,
+                  width * 0.065,
                 ),
               ),
 
@@ -622,18 +787,18 @@ class _SettingsPageState
 
               Text(
 
-                "Customize your workspace experience.",
+                "Manage your workspace preferences.",
 
                 textAlign:
                 TextAlign.center,
 
                 style: TextStyle(
 
-                  color:darkMode?
-                  Colors.white70:Colors.black,
+                  color:
+                  Colors.white70,
 
                   fontSize:
-                  width * 0.035,
+                  width * 0.034,
                 ),
               ),
             ],
@@ -658,11 +823,7 @@ class _SettingsPageState
       style: TextStyle(
 
         color:
-        darkMode
-
-            ? Colors.white
-
-            : Colors.black,
+        Colors.white,
 
         fontWeight:
         FontWeight.bold,
@@ -694,148 +855,79 @@ class _SettingsPageState
         onChanged,
       }) {
 
-    return ClipRRect(
+    return glassCard(
 
-      borderRadius:
-      BorderRadius.circular(28),
+      child: Row(
 
-      child: BackdropFilter(
+        children: [
 
-        filter: ImageFilter.blur(
-
-          sigmaX: 20,
-          sigmaY: 20,
-        ),
-
-        child: Container(
-
-          padding:
-          const EdgeInsets.symmetric(
-
-            horizontal: 22,
-            vertical: 20,
+          iconCircle(
+            icon,
+            color,
           ),
 
-          decoration:
-          BoxDecoration(
-
-            borderRadius:
-            BorderRadius.circular(
-              28,
-            ),
-
-            color:darkMode?
-            Colors.white
-                .withOpacity(
-              0.08,
-            ): Colors.black,
-
-            border: Border.all(
-
-              color:darkMode?
-              color.withOpacity(
-                0.25,
-              ):Colors.black,
-            ),
+          const SizedBox(
+            width: 18,
           ),
 
-          child: Row(
+          Expanded(
 
-            children: [
+            child: Column(
 
-              Container(
+              crossAxisAlignment:
+              CrossAxisAlignment.start,
 
-                padding:
-                const EdgeInsets.all(
-                  14,
-                ),
+              children: [
 
-                decoration:
-                BoxDecoration(
+                Text(
 
-                  shape:
-                  BoxShape.circle,
+                  title,
 
-                  color:
-                  color.withOpacity(
-                    0.15,
+                  style: TextStyle(
+
+                    color:
+                    Colors.white,
+
+                    fontWeight:
+                    FontWeight.bold,
+
+                    fontSize:
+                    width * 0.040,
                   ),
                 ),
 
-                child: Icon(
-
-                  icon,
-
-                  color:
-                  color,
+                const SizedBox(
+                  height: 6,
                 ),
-              ),
 
-              const SizedBox(
-                width: 18,
-              ),
+                Text(
 
-              Expanded(
+                  subtitle,
 
-                child: Column(
+                  style: TextStyle(
 
-                  crossAxisAlignment:
-                  CrossAxisAlignment
-                      .start,
+                    color:
+                    Colors.white60,
 
-                  children: [
-
-                    Text(
-
-                      title,
-
-                      style: TextStyle(
-
-                        color:
-                        Colors.white,
-
-                        fontWeight:
-                        FontWeight.bold,
-
-                        fontSize:
-                        width * 0.040,
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 6,
-                    ),
-
-                    Text(
-
-                      subtitle,
-
-                      style: TextStyle(
-
-                        color:
-                        Colors.white60,
-
-                        fontSize:
-                        width * 0.031,
-                      ),
-                    ),
-                  ],
+                    fontSize:
+                    width * 0.031,
+                  ),
                 ),
-              ),
-
-              Switch(
-
-                value: value,
-
-                activeColor:
-                color,
-
-                onChanged:
-                onChanged,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+
+          Switch(
+
+            value: value,
+
+            activeColor:
+            color,
+
+            onChanged:
+            onChanged,
+          ),
+        ],
       ),
     );
   }
@@ -862,156 +954,257 @@ class _SettingsPageState
 
       onTap: onTap,
 
-      child: ClipRRect(
+      child: glassCard(
 
-        borderRadius:
-        BorderRadius.circular(28),
+        child: Row(
 
-        child: BackdropFilter(
+          children: [
 
-          filter: ImageFilter.blur(
-
-            sigmaX: 20,
-            sigmaY: 20,
-          ),
-
-          child: Container(
-
-            padding:
-            const EdgeInsets.symmetric(
-
-              horizontal: 22,
-              vertical: 20,
+            iconCircle(
+              icon,
+              color,
             ),
 
-            decoration:
-            BoxDecoration(
-
-              borderRadius:
-              BorderRadius.circular(
-                28,
-              ),
-
-              color:darkMode?
-              Colors.white
-                  .withOpacity(
-                0.08,
-              ):Colors.black,
-
-              border: Border.all(
-
-                color:
-                color.withOpacity(
-                  0.25,
-                ),
-              ),
+            const SizedBox(
+              width: 18,
             ),
 
-            child: Row(
+            Expanded(
 
-              children: [
+              child: Column(
 
-                Container(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
 
-                  padding:
-                  const EdgeInsets.all(
-                    14,
-                  ),
+                children: [
 
-                  decoration:
-                  BoxDecoration(
+                  Text(
 
-                    shape:
-                    BoxShape.circle,
+                    title,
 
-                    color:
-                    color.withOpacity(
-                      0.15,
+                    style: TextStyle(
+
+                      color:
+                      Colors.white,
+
+                      fontWeight:
+                      FontWeight.bold,
+
+                      fontSize:
+                      width * 0.040,
                     ),
                   ),
 
-                  child: Icon(
+                  const SizedBox(
+                    height: 6,
+                  ),
 
-                    icon,
+                  Text(
+
+                    subtitle,
+
+                    style: TextStyle(
+
+                      color:
+                      Colors.white60,
+
+                      fontSize:
+                      width * 0.031,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Icon(
+
+              Icons.arrow_forward_ios,
+
+              color:
+              Colors.white54,
+
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// =========================
+  /// INFO CARD
+  /// =========================
+  Widget infoCard(
+
+      double width, {
+
+        required IconData icon,
+
+        required String title,
+
+        required String subtitle,
+      }) {
+
+    return glassCard(
+
+      child: Row(
+
+        children: [
+
+          iconCircle(
+            icon,
+            Colors.cyanAccent,
+          ),
+
+          const SizedBox(
+            width: 18,
+          ),
+
+          Expanded(
+
+            child: Column(
+
+              crossAxisAlignment:
+              CrossAxisAlignment.start,
+
+              children: [
+
+                Text(
+
+                  title,
+
+                  style: TextStyle(
 
                     color:
-                    color,
+                    Colors.white,
+
+                    fontWeight:
+                    FontWeight.bold,
+
+                    fontSize:
+                    width * 0.040,
                   ),
                 ),
 
                 const SizedBox(
-                  width: 18,
+                  height: 6,
                 ),
 
-                Expanded(
+                Text(
 
-                  child: Column(
+                  subtitle,
 
-                    crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
+                  style: TextStyle(
 
-                    children: [
+                    color:
+                    Colors.white60,
 
-                      Text(
-
-                        title,
-
-                        style: TextStyle(
-
-                          color:
-                          darkMode
-
-                              ? Colors.white
-
-                              : Colors.white,
-
-                          fontWeight:
-                          FontWeight.bold,
-
-                          fontSize:
-                          width * 0.040,
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: 6,
-                      ),
-
-                      Text(
-
-                        subtitle,
-
-                        style: TextStyle(
-
-                          color:
-                          darkMode
-
-                              ? Colors.white
-
-                              : Colors.white,
-
-                          fontSize:
-                          width * 0.031,
-                        ),
-                      ),
-                    ],
+                    fontSize:
+                    width * 0.031,
                   ),
-                ),
-
-                Icon(
-
-                  Icons.arrow_forward_ios,
-
-                  color:
-                  Colors.white54,
-
-                  size: 18,
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  /// =========================
+  /// GLASS CARD
+  /// =========================
+  Widget glassCard({
+    required Widget child,
+  }) {
+
+    return ClipRRect(
+
+      borderRadius:
+      BorderRadius.circular(28),
+
+      child: BackdropFilter(
+
+        filter:
+        ImageFilter.blur(
+
+          sigmaX: 20,
+          sigmaY: 20,
         ),
+
+        child: Container(
+
+          padding:
+          const EdgeInsets.symmetric(
+
+            horizontal: 22,
+            vertical: 20,
+          ),
+
+          decoration:
+          BoxDecoration(
+
+            borderRadius:
+            BorderRadius.circular(
+              28,
+            ),
+
+            color:
+            Colors.white
+                .withOpacity(
+              0.08,
+            ),
+
+            border:
+            Border.all(
+
+              color:
+              Colors.white
+                  .withOpacity(
+                0.08,
+              ),
+            ),
+          ),
+
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  /// =========================
+  /// ICON CIRCLE
+  /// =========================
+  Widget iconCircle(
+      IconData icon,
+      Color color,
+      ) {
+
+    return Container(
+
+      padding:
+      const EdgeInsets.all(
+        14,
+      ),
+
+      decoration:
+      BoxDecoration(
+
+        shape:
+        BoxShape.circle,
+
+        color:
+        color.withOpacity(
+          0.15,
+        ),
+      ),
+
+      child: Icon(
+
+        icon,
+
+        color:
+        color,
       ),
     );
   }
@@ -1019,10 +1212,12 @@ class _SettingsPageState
   /// =========================
   /// TOP BUTTON
   /// =========================
-  Widget topButton(
-      IconData icon,
-      VoidCallback onTap,
-      ) {
+  Widget topButton({
+
+    required IconData icon,
+
+    required VoidCallback onTap,
+  }) {
 
     return GestureDetector(
 
@@ -1035,7 +1230,8 @@ class _SettingsPageState
 
         child: BackdropFilter(
 
-          filter: ImageFilter.blur(
+          filter:
+          ImageFilter.blur(
 
             sigmaX: 20,
             sigmaY: 20,
@@ -1054,11 +1250,11 @@ class _SettingsPageState
                 18,
               ),
 
-              color:darkMode?
+              color:
               Colors.white
                   .withOpacity(
                 0.08,
-              ):Colors.black,
+              ),
             ),
 
             child: Icon(
@@ -1075,7 +1271,7 @@ class _SettingsPageState
   }
 
   /// =========================
-  /// GLOW CIRCLE
+  /// GLOW
   /// =========================
   Widget glowCircle(
       double size,

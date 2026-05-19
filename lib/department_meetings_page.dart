@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+
 import 'homepage.dart';
 
 class DepartmentMeetingsPage
@@ -63,6 +64,7 @@ class DepartmentMeetingsPage
     return Scaffold(
 
       backgroundColor:
+
       const Color(
         0xFF05010D,
       ),

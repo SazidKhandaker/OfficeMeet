@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+
 class PrivacySecurityPage
     extends StatefulWidget {
 
@@ -143,7 +144,7 @@ class _PrivacySecurityPageState
     return Scaffold(
 
       backgroundColor:
-      const Color(0xFF0B0618),
+        const Color(0xFF0B0618),
 
       body: SafeArea(
 

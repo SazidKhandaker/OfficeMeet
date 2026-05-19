@@ -374,7 +374,8 @@ class _OnboardingScreenState
 
       child:Scaffold(
 
-      backgroundColor: const Color(0xFF020617),
+      backgroundColor:
+          const Color(0xFF020617),
 
       body: Stack(
         children: [

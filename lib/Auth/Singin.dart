@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:office_meet/Auth/login.dart' show LoginPage;
 import 'package:firebase_auth/firebase_auth.dart';
 
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -37,7 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
     return Scaffold(
 
-      backgroundColor: const Color(0xFF020617),
+      backgroundColor:const Color(0xFF020617),
 
       body: SafeArea(
 
