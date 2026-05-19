@@ -1567,6 +1567,160 @@ class _HomeContentState
                     final meetings =
                         snapshot.data!.docs;
 
+                    /// =========================
+                    /// SORT MEETINGS
+                    /// =========================
+                    meetings.sort((a, b) {
+
+                      final aData =
+                      a.data()
+                      as Map<String, dynamic>;
+
+                      final bData =
+                      b.data()
+                      as Map<String, dynamic>;
+
+                      DateTime aDateTime;
+                      DateTime bDateTime;
+
+                      /// =========================
+                      /// A DATETIME
+                      /// =========================
+                      if (aData.containsKey(
+                        "startDateTime",
+                      )) {
+
+                        aDateTime =
+
+                            (aData["startDateTime"]
+                            as Timestamp)
+                                .toDate();
+
+                      } else {
+
+                        final aDate =
+                        DateTime.parse(
+
+                          aData["meetingDate"],
+                        );
+
+                        final aParsed =
+                        DateFormat.jm().parse(
+
+                          aData["startTime"],
+                        );
+
+                        aDateTime = DateTime(
+
+                          aDate.year,
+                          aDate.month,
+                          aDate.day,
+
+                          aParsed.hour,
+                          aParsed.minute,
+                        );
+                      }
+
+                      /// =========================
+                      /// B DATETIME
+                      /// =========================
+                      if (bData.containsKey(
+                        "startDateTime",
+                      )) {
+
+                        bDateTime =
+
+                            (bData["startDateTime"]
+                            as Timestamp)
+                                .toDate();
+
+                      } else {
+
+                        final bDate =
+                        DateTime.parse(
+
+                          bData["meetingDate"],
+                        );
+
+                        final bParsed =
+                        DateFormat.jm().parse(
+
+                          bData["startTime"],
+                        );
+
+                        bDateTime = DateTime(
+
+                          bDate.year,
+                          bDate.month,
+                          bDate.day,
+
+                          bParsed.hour,
+                          bParsed.minute,
+                        );
+                      }
+
+                      /// =========================
+                      /// UPCOMING FIRST
+                      /// =========================
+                      return aDateTime.compareTo(
+                        bDateTime,
+                      );
+                    });
+
+                    /// =========================
+                    /// REMOVE OLD MEETINGS
+                    /// =========================
+                    final now = DateTime.now();
+
+                    meetings.removeWhere((doc) {
+
+                      final data =
+                      doc.data()
+                      as Map<String, dynamic>;
+
+                      DateTime endDateTime;
+
+                      if (data.containsKey(
+                        "endDateTime",
+                      )) {
+
+                        endDateTime =
+
+                            (data["endDateTime"]
+                            as Timestamp)
+                                .toDate();
+
+                      } else {
+
+                        final date =
+                        DateTime.parse(
+
+                          data["meetingDate"],
+                        );
+
+                        final parsed =
+                        DateFormat.jm().parse(
+
+                          data["endTime"],
+                        );
+
+                        endDateTime = DateTime(
+
+                          date.year,
+                          date.month,
+                          date.day,
+
+                          parsed.hour,
+                          parsed.minute,
+                        );
+                      }
+
+                      /// OLD MEETING REMOVE
+                      return endDateTime.isBefore(
+                        now,
+                      );
+                    });
+
                     /// NO DATA
                     if (meetings.isEmpty) {
 
