@@ -292,17 +292,17 @@ class _SettingsPageState
                     value:
                     meetingNotification,
 
-                    onChanged:
-                        (value) async {
+                      onChanged:
+                          (value) async {
 
-                      setState(() {
+                        setState(() {
 
-                        meetingNotification =
-                            value;
-                      });
+                          meetingNotification =
+                              value;
+                        });
 
-                      await saveSettings();
-                    },
+                        await saveSettings();
+                      }
                   ),
 
                   SizedBox(

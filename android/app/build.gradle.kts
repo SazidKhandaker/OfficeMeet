@@ -24,8 +24,10 @@ android {
 
         targetCompatibility =
             JavaVersion.VERSION_17
-    }
 
+        isCoreLibraryDesugaringEnabled =
+            true
+    }
     kotlinOptions {
 
         jvmTarget =
@@ -77,5 +79,8 @@ dependencies {
 
     implementation(
         "com.google.firebase:firebase-auth"
+    )
+    coreLibraryDesugaring(
+        "com.android.tools:desugar_jdk_libs:2.0.4"
     )
 }

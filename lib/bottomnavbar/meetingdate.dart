@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:office_meet/Service/notification_service.dart' show NotificationService;
 import 'package:office_meet/bottomnavbar/Calander.dart' show CalendarPage;
 import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
 import 'package:office_meet/homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
 
 
 class MeetingBookingPage extends StatefulWidget {
@@ -393,6 +395,36 @@ class _MeetingBookingPageState
           .serverTimestamp(),
 
     });
+    final prefs =
+    await SharedPreferences.getInstance();
+
+    final notificationOn =
+
+        prefs.getBool(
+          "meetingNotification",
+        ) ??
+            true;
+
+    if (notificationOn) {
+
+      await NotificationService
+          .scheduleMeetingNotification(
+
+        id:
+        DateTime.now()
+            .millisecondsSinceEpoch
+            .remainder(100000),
+
+        title:
+        "Upcoming Meeting",
+
+        body:
+        "Your meeting starts in 30 minutes.",
+
+        meetingTime:
+        start,
+      );
+    }
 
     setState(() {
 
