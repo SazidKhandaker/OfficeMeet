@@ -1,7 +1,10 @@
+import 'dart:io' show Platform;
 import 'dart:ui';
 
+import 'package:device_info_plus/device_info_plus.dart' show AndroidDeviceInfo, DeviceInfoPlugin;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:office_meet/widget/premium_snackbar.dart' show showPremiumSnackBar;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -17,6 +20,38 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState
     extends State<SettingsPage> {
+  String deviceName = "Loading...";
+  Future<void> getDeviceInfo() async {
+
+    try {
+
+      final deviceInfo =
+      DeviceInfoPlugin();
+
+      if (Platform.isAndroid) {
+
+        final androidInfo =
+
+        await deviceInfo.androidInfo;
+
+        setState(() {
+
+          deviceName =
+
+          "${androidInfo.brand} "
+              "${androidInfo.model}";
+        });
+      }
+
+    } catch (e) {
+
+      setState(() {
+
+        deviceName =
+        "Android Device";
+      });
+    }
+  }
 
   bool meetingNotification = true;
 
@@ -26,6 +61,7 @@ class _SettingsPageState
     super.initState();
 
     loadSettings();
+    getDeviceInfo();
   }
 
   /// =========================
@@ -391,18 +427,20 @@ class _SettingsPageState
                         if (context
                             .mounted) {
 
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(
+                          showPremiumSnackBar(
 
-                            const SnackBar(
+                            context: context,
 
-                              content: Text(
+                            message:
+                            "Password reset email sent successfully",
 
-                                "Password reset email sent",
-                              ),
-                            ),
+                            color:
+                            Colors.greenAccent,
+
+                            icon:
+                            Icons.check_circle,
                           );
+
                         }
                       }
                     },
@@ -564,7 +602,7 @@ class _SettingsPageState
                     "Current Device",
 
                     subtitle:
-                    "Android Device",
+                    deviceName,
                   ),
 
                   SizedBox(
@@ -623,19 +661,20 @@ class _SettingsPageState
                     Colors.pinkAccent,
 
                     onTap: () {
+                      showPremiumSnackBar(
 
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(
+                        context: context,
 
-                        const SnackBar(
+                        message:
+                        "Support team will contact you soon",
 
-                          content: Text(
+                        color:
+                        Colors.pinkAccent,
 
-                            "Support coming soon",
-                          ),
-                        ),
+                        icon:
+                        Icons.support_agent,
                       );
+
                     },
                   ),
 
@@ -1310,4 +1349,5 @@ class _SettingsPageState
       ),
     );
   }
+
 }

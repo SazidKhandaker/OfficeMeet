@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:office_meet/Security%20and%20privacy/settingpage.dart' show SettingsPage;
 import 'package:office_meet/bottomnavbar/Calander.dart' show CalendarPage;
 import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
 import 'package:office_meet/bottomnavbar/profile.dart' show ProfilePage;
@@ -10,7 +11,7 @@ import 'package:office_meet/bottomnavbar/meetingdate.dart' show MeetingBookingPa
 import 'package:office_meet/department_meetings_page.dart' show DepartmentMeetingsPage;
 import 'package:office_meet/profile/drawerpage.dart' show AppDrawer;
 import 'package:office_meet/workspace/employee_details_page.dart' show EmployeeDetailsPage;
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   final int selectedIndex;
@@ -798,7 +799,24 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState
     extends State<HomeContent> {
+  //Notifcation
+  bool meetingNotification = true;
+  Future<void> loadNotificationStatus() async {
 
+    final prefs =
+    await SharedPreferences.getInstance();
+
+    setState(() {
+
+      meetingNotification =
+
+          prefs.getBool(
+            "meetingNotification",
+          ) ??
+              true;
+    });
+  }
+  //Notifcation end
   String userName = "User";
 
   String profileImage = "";
@@ -811,6 +829,7 @@ class _HomeContentState
     super.initState();
 
     getUserData();
+    loadNotificationStatus();
   }
 
   /// =========================
@@ -990,15 +1009,138 @@ class _HomeContentState
                   Row(
                     children: [
 
-                      glassCircleButton(
+                      GestureDetector(
 
-                        icon:
-                        Icons.notifications_none_rounded,
+                        onTap: () async {
 
-                        size:
-                        width * 0.14,
+                          await Navigator.push(
+
+                            context,
+
+                            MaterialPageRoute(
+
+                              builder: (_) =>
+
+                              const SettingsPage(),
+                            ),
+                          );
+
+                          /// RELOAD STATUS
+                          loadNotificationStatus();
+                        },
+
+                        child: AnimatedContainer(
+
+                          duration:
+                          const Duration(
+                            milliseconds: 300,
+                          ),
+
+                          height: width * 0.14,
+                          width: width * 0.14,
+
+                          decoration:
+                          BoxDecoration(
+
+                            shape:
+                            BoxShape.circle,
+
+                            gradient:
+                            LinearGradient(
+
+                              colors:
+
+                              meetingNotification
+
+                                  ? [
+
+                                Colors.greenAccent
+                                    .withOpacity(
+                                  0.35,
+                                ),
+
+                                Colors.green
+                                    .withOpacity(
+                                  0.15,
+                                ),
+                              ]
+
+                                  : [
+
+                                Colors.redAccent
+                                    .withOpacity(
+                                  0.25,
+                                ),
+
+                                Colors.white
+                                    .withOpacity(
+                                  0.08,
+                                ),
+                              ],
+                            ),
+
+                            border:
+                            Border.all(
+
+                              color:
+
+                              meetingNotification
+
+                                  ? Colors.greenAccent
+                                  .withOpacity(
+                                0.6,
+                              )
+
+                                  : Colors.redAccent
+                                  .withOpacity(
+                                0.4,
+                              ),
+                            ),
+
+                            boxShadow: [
+
+                              BoxShadow(
+
+                                color:
+
+                                meetingNotification
+
+                                    ? Colors.greenAccent
+                                    .withOpacity(
+                                  0.30,
+                                )
+
+                                    : Colors.redAccent
+                                    .withOpacity(
+                                  0.15,
+                                ),
+
+                                blurRadius: 18,
+                              ),
+                            ],
+                          ),
+
+                          child: Icon(
+
+                            meetingNotification
+
+                                ? Icons.notifications_active
+
+                                : Icons.notifications_off,
+
+                            color:
+
+                            meetingNotification
+
+                                ? Colors.greenAccent
+
+                                : Colors.redAccent,
+
+                            size:
+                            width * 0.07,
+                          ),
+                        ),
                       ),
-
                       SizedBox(
                         width:
                         width * 0.03,
