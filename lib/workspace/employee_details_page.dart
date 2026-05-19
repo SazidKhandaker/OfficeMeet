@@ -517,10 +517,40 @@ class EmployeeDetailsPage
 
                                             "mailto:$email",
                                           );
+                                          try {
 
-                                          await launchUrl(
-                                            uri,
-                                          );
+                                            final Uri emailUri = Uri(
+
+                                              scheme: 'mailto',
+
+                                              path: email,
+                                            );
+
+                                            await launchUrl(
+
+                                              emailUri,
+
+                                              mode:
+                                              LaunchMode.externalApplication,
+                                            );
+
+                                          } catch (e) {
+
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+
+                                              const SnackBar(
+
+                                                content: Text(
+
+                                                  "Mail app not found",
+                                                ),
+                                              ),
+                                            );
+                                          }
+
+
                                         },
 
                                         child: Container(

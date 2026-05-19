@@ -8,6 +8,7 @@ import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
 import 'package:office_meet/bottomnavbar/profile.dart' show ProfilePage;
 import 'package:office_meet/bottomnavbar/meetingdate.dart' show MeetingBookingPage;
 import 'package:office_meet/department_meetings_page.dart' show DepartmentMeetingsPage;
+import 'package:office_meet/workspace/employee_details_page.dart' show EmployeeDetailsPage;
 
 
 class HomePage extends StatefulWidget {
@@ -3414,186 +3415,205 @@ class _HomeContentState
                                 data["profileImage"]
                                     ?? "";
 
-                            return Container(
+                            return GestureDetector(
+                              onTap: () {
 
-                              margin:
-                              EdgeInsets.only(
+                                Navigator.push(
 
-                                bottom:
-                                height * 0.02,
-                              ),
+                                  context,
 
-                              padding:
-                              EdgeInsets.all(
-                                width * 0.04,
-                              ),
+                                  MaterialPageRoute(
 
-                              decoration:
-                              BoxDecoration(
+                                    builder: (_) =>
 
-                                borderRadius:
-                                BorderRadius.circular(
-                                  24,
+                                        EmployeeDetailsPage(
+
+                                          userData: data,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+
+                                margin:
+                                EdgeInsets.only(
+
+                                  bottom:
+                                  height * 0.02,
                                 ),
 
-                                color:
-                                Colors.white
-                                    .withOpacity(
-                                  0.05,
+                                padding:
+                                EdgeInsets.all(
+                                  width * 0.04,
                                 ),
 
-                                border:
-                                Border.all(
+                                decoration:
+                                BoxDecoration(
+
+                                  borderRadius:
+                                  BorderRadius.circular(
+                                    24,
+                                  ),
 
                                   color:
                                   Colors.white
                                       .withOpacity(
-                                    0.06,
-                                  ),
-                                ),
-                              ),
-
-                              child: Row(
-
-                                children: [
-
-                                  /// AVATAR
-                                  CircleAvatar(
-
-                                    radius:
-                                    width * 0.07,
-
-                                    backgroundColor:
-                                    Colors.white
-                                        .withOpacity(
-                                      0.08,
-                                    ),
-
-                                    backgroundImage:
-
-                                    image
-                                        .toString()
-                                        .isNotEmpty
-
-                                        ? NetworkImage(
-                                      image,
-                                    )
-
-                                        : null,
-
-                                    child:
-
-                                    image
-                                        .toString()
-                                        .isEmpty
-
-                                        ? Icon(
-
-                                      Icons.person,
-
-                                      color:
-                                      Colors.white,
-
-                                      size:
-                                      width * 0.06,
-                                    )
-
-                                        : null,
+                                    0.05,
                                   ),
 
-                                  SizedBox(
-                                    width:
-                                    width * 0.04,
-                                  ),
-
-                                  /// INFO
-                                  Expanded(
-
-                                    child: Column(
-
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment
-                                          .start,
-
-                                      children: [
-
-                                        Text(
-
-                                          data["fullName"]
-                                              ?? "",
-
-                                          style:
-                                          TextStyle(
-
-                                            color:
-                                            Colors.white,
-
-                                            fontWeight:
-                                            FontWeight.bold,
-
-                                            fontSize:
-                                            width * 0.042,
-                                          ),
-                                        ),
-
-                                        SizedBox(
-                                          height: 4,
-                                        ),
-
-                                        Text(
-
-                                          data["designation"]
-                                              ?? "",
-
-                                          style:
-                                          TextStyle(
-
-                                            color:
-                                            Colors.white70,
-
-                                            fontSize:
-                                            width * 0.033,
-                                          ),
-                                        ),
-
-                                        SizedBox(
-                                          height: 4,
-                                        ),
-
-                                        Text(
-
-                                          data["department"]
-                                              ?? "",
-
-                                          style:
-                                          TextStyle(
-
-                                            color:
-                                            Colors.cyanAccent,
-
-                                            fontWeight:
-                                            FontWeight.w600,
-
-                                            fontSize:
-                                            width * 0.032,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  /// ICON
-                                  Icon(
-
-                                    Icons.arrow_forward_ios,
+                                  border:
+                                  Border.all(
 
                                     color:
-                                    Colors.white54,
-
-                                    size:
-                                    width * 0.04,
+                                    Colors.white
+                                        .withOpacity(
+                                      0.06,
+                                    ),
                                   ),
-                                ],
+                                ),
+
+                                child: Row(
+
+                                  children: [
+
+                                    /// AVATAR
+                                    CircleAvatar(
+
+                                      radius:
+                                      width * 0.07,
+
+                                      backgroundColor:
+                                      Colors.white
+                                          .withOpacity(
+                                        0.08,
+                                      ),
+
+                                      backgroundImage:
+
+                                      image
+                                          .toString()
+                                          .isNotEmpty
+
+                                          ? NetworkImage(
+                                        image,
+                                      )
+
+                                          : null,
+
+                                      child:
+
+                                      image
+                                          .toString()
+                                          .isEmpty
+
+                                          ? Icon(
+
+                                        Icons.person,
+
+                                        color:
+                                        Colors.white,
+
+                                        size:
+                                        width * 0.06,
+                                      )
+
+                                          : null,
+                                    ),
+
+                                    SizedBox(
+                                      width:
+                                      width * 0.04,
+                                    ),
+
+                                    /// INFO
+                                    Expanded(
+
+                                      child: Column(
+
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment
+                                            .start,
+
+                                        children: [
+
+                                          Text(
+
+                                            data["fullName"]
+                                                ?? "",
+
+                                            style:
+                                            TextStyle(
+
+                                              color:
+                                              Colors.white,
+
+                                              fontWeight:
+                                              FontWeight.bold,
+
+                                              fontSize:
+                                              width * 0.042,
+                                            ),
+                                          ),
+
+                                          SizedBox(
+                                            height: 4,
+                                          ),
+
+                                          Text(
+
+                                            data["designation"]
+                                                ?? "",
+
+                                            style:
+                                            TextStyle(
+
+                                              color:
+                                              Colors.white70,
+
+                                              fontSize:
+                                              width * 0.033,
+                                            ),
+                                          ),
+
+                                          SizedBox(
+                                            height: 4,
+                                          ),
+
+                                          Text(
+
+                                            data["department"]
+                                                ?? "",
+
+                                            style:
+                                            TextStyle(
+
+                                              color:
+                                              Colors.cyanAccent,
+
+                                              fontWeight:
+                                              FontWeight.w600,
+
+                                              fontSize:
+                                              width * 0.032,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    /// ICON
+                                    Icon(
+
+                                      Icons.arrow_forward_ios,
+
+                                      color:
+                                      Colors.white54,
+
+                                      size:
+                                      width * 0.04,
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },
