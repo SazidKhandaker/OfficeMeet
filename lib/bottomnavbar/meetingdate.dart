@@ -298,7 +298,11 @@ class _MeetingBookingPageState
 
         isLoading = false;
       });
+      final pending = await NotificationService
+          .notificationsPlugin
+          .pendingNotificationRequests();
 
+      print(pending.length);
       showDialog(
 
         context: context,
@@ -356,10 +360,12 @@ class _MeetingBookingPageState
       return;
     }
 
-    await FirebaseFirestore
+    final meetingDoc = FirebaseFirestore
         .instance
         .collection("meetings")
-        .add({
+        .doc();
+
+    await meetingDoc.set({
 
       "fullName":
       fullName,
@@ -395,6 +401,7 @@ class _MeetingBookingPageState
           .serverTimestamp(),
 
     });
+    print("MEETING SAVED");
     final prefs =
     await SharedPreferences.getInstance();
 
@@ -404,26 +411,21 @@ class _MeetingBookingPageState
           "meetingNotification",
         ) ??
             true;
+    print(notificationOn);
+    print(start);
 
     if (notificationOn) {
+      print("BEFORE CALLING NOTIFICATION FUNCTION");
+      await NotificationService.scheduleMeetingNotification(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
 
-      await NotificationService
-          .scheduleMeetingNotification(
+        title: "Meeting Reminder",
 
-        id:
-        DateTime.now()
-            .millisecondsSinceEpoch
-            .remainder(100000),
+        body: "Meeting starts in 2 minutes",
 
-        title:
-        "Upcoming Meeting",
-
-        body:
-        "Your meeting starts in 30 minutes.",
-
-        meetingTime:
-        start,
+        meetingTime: start,
       );
+      print("SCHEDULE FUNCTION CALLED");
     }
 
     setState(() {
@@ -446,6 +448,9 @@ class _MeetingBookingPageState
       ),
     );
     print(fullName);
+    print("SAVE MEETING CLICKED");
+    print("NOTIFICATION ON: $notificationOn");
+    print("START TIME: $start");
   }
 
   /// =========================

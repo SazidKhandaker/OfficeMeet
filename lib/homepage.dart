@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:office_meet/Security%20and%20privacy/settingpage.dart' show SettingsPage;
+import 'package:office_meet/Service/notification_service.dart' show NotificationService;
 import 'package:office_meet/bottomnavbar/Calander.dart' show CalendarPage;
 import 'package:office_meet/bottomnavbar/addmeeting.dart' show MeetingPage;
 import 'package:office_meet/bottomnavbar/profile.dart' show ProfilePage;
@@ -555,6 +556,7 @@ class _HomePageState
                                       size:
                                       width * 0.04,
                                     ),
+
                                   ],
                                 ),
                               );
@@ -1640,20 +1642,25 @@ class _HomeContentState
               /// =========================
               /// TITLE
               /// =========================
-              Text(
+              GestureDetector(
+                onTap: ()async{
+                  await NotificationService.testNotification();
+                },
+                child: Text(
 
-                "My Schedule",
+                  "My Schedule",
 
-                style: TextStyle(
+                  style: TextStyle(
 
-                  color:
-                  Colors.white,
+                    color:
+                    Colors.white,
 
-                  fontSize:
-                  width * 0.075,
+                    fontSize:
+                    width * 0.075,
 
-                  fontWeight:
-                  FontWeight.bold,
+                    fontWeight:
+                    FontWeight.bold,
+                  ),
                 ),
               ),
 
@@ -1747,20 +1754,16 @@ class _HomeContentState
                         );
 
                         final aParsed =
-                        DateFormat.jm().parse(
+                        convertToDateTime(
 
+                          time:
                           aData["startTime"],
+
+                          date:
+                          aDate,
                         );
 
-                        aDateTime = DateTime(
-
-                          aDate.year,
-                          aDate.month,
-                          aDate.day,
-
-                          aParsed.hour,
-                          aParsed.minute,
-                        );
+                        aDateTime = aParsed;
                       }
 
                       /// =========================
@@ -1785,20 +1788,16 @@ class _HomeContentState
                         );
 
                         final bParsed =
-                        DateFormat.jm().parse(
+                        convertToDateTime(
 
+                          time:
                           bData["startTime"],
+
+                          date:
+                          bDate,
                         );
 
-                        bDateTime = DateTime(
-
-                          bDate.year,
-                          bDate.month,
-                          bDate.day,
-
-                          bParsed.hour,
-                          bParsed.minute,
-                        );
+                        bDateTime = bParsed;
                       }
 
                       /// =========================
@@ -1841,20 +1840,16 @@ class _HomeContentState
                         );
 
                         final parsed =
-                        DateFormat.jm().parse(
+                        convertToDateTime(
 
+                          time:
                           data["endTime"],
+
+                          date:
+                          date,
                         );
 
-                        endDateTime = DateTime(
-
-                          date.year,
-                          date.month,
-                          date.day,
-
-                          parsed.hour,
-                          parsed.minute,
-                        );
+                        endDateTime = parsed;
                       }
 
                       /// OLD MEETING REMOVE
@@ -3123,23 +3118,32 @@ class _HomeContentState
     final cleaned =
 
     time
-
         .replaceAll(
       RegExp(r'\s+'),
       ' ',
     )
-
         .replaceAll(
       '\u202F',
       ' ',
     )
-
         .trim();
 
-    final parsed =
-    DateFormat(
-      "h:mm a",
-    ).parse(cleaned);
+    DateTime parsed;
+
+    try {
+
+      /// 12 HOUR FORMAT
+      parsed = DateFormat(
+        "h:mm a",
+      ).parse(cleaned);
+
+    } catch (e) {
+
+      /// 24 HOUR FORMAT
+      parsed = DateFormat(
+        "HH:mm",
+      ).parse(cleaned);
+    }
 
     return DateTime(
 
@@ -3349,34 +3353,28 @@ class _HomeContentState
         else {
 
           final startParsed =
-          DateFormat.jm().parse(
+          convertToDateTime(
+
+            time:
             doc["startTime"],
+
+            date:
+            date,
           );
 
           final endParsed =
-          DateFormat.jm().parse(
+          convertToDateTime(
+
+            time:
             doc["endTime"],
+
+            date:
+            date,
           );
 
-          existingStart = DateTime(
+          existingStart = startParsed;
 
-            date.year,
-            date.month,
-            date.day,
-
-            startParsed.hour,
-            startParsed.minute,
-          );
-
-          existingEnd = DateTime(
-
-            date.year,
-            date.month,
-            date.day,
-
-            endParsed.hour,
-            endParsed.minute,
-          );
+          existingEnd = endParsed;
         }
 
         /// =========================

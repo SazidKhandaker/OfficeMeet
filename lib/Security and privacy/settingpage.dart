@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:device_info_plus/device_info_plus.dart' show AndroidDeviceInfo, DeviceInfoPlugin;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:office_meet/Service/notification_service.dart' show NotificationService;
 import 'package:office_meet/widget/premium_snackbar.dart' show showPremiumSnackBar;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,14 +73,19 @@ class _SettingsPageState
     final prefs =
     await SharedPreferences.getInstance();
 
-    setState(() {
+    final savedValue =
+        prefs.getBool(
+          "meetingNotification",
+        ) ?? true;
 
-      meetingNotification =
-          prefs.getBool(
-            "meetingNotification",
-          ) ??
-              true;
-    });
+    if (mounted) {
+
+      setState(() {
+
+        meetingNotification =
+            savedValue;
+      });
+    }
   }
 
   /// =========================
@@ -291,17 +297,63 @@ class _SettingsPageState
 
                     value:
                     meetingNotification,
+                      onChanged: (value) async {
 
-                      onChanged:
-                          (value) async {
+                        if (value) {
 
+                          final granted =
+                          await NotificationService
+                              .requestPermission();
+
+                          if (!granted) {
+
+                            showPremiumSnackBar(
+                              context: context,
+                              message: "Notification permission denied",
+                              color: Colors.redAccent,
+                              icon: Icons.notifications_off,
+                            );
+
+                            return;
+                          }
+
+                          await NotificationService
+                              .testNotification();
+
+                        } else {
+
+                          await NotificationService
+                              .cancelAllNotifications();
+                        }
                         setState(() {
 
-                          meetingNotification =
-                              value;
+                          meetingNotification = value;
                         });
 
                         await saveSettings();
+
+                        showPremiumSnackBar(
+
+                          context: context,
+
+                          message:
+
+                          value
+                              ? "Meeting notifications enabled"
+                              : "Meeting notifications disabled",
+
+                          color:
+
+                          value
+                              ? Colors.greenAccent
+                              : Colors.orangeAccent,
+
+                          icon:
+
+                          value
+                              ? Icons.notifications_active
+                              : Icons.notifications_off,
+                        );
                       }
                   ),
 
